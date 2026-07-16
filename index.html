@@ -8,12 +8,11 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="Yeguada MS - испанская кровь, русская земля">
   <meta property="og:description" content="Частная конеферма андалузских лошадей Pura Raza Espanola в Тульской области.">
-  <meta property="og:image" content="assets/hero-reference.png">
+  <meta property="og:image" content="assets/stallion-motion.jpg">
   <meta property="og:locale" content="ru_RU">
   <title>Yeguada MS - андалузские лошади в России</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/hero-reference.png" as="image" media="(min-width: 768px)">
-  <link rel="preload" href="assets/stallion-motion.jpg" as="image" media="(max-width: 767px)">
+  <link rel="preload" href="assets/stallion-motion.jpg" as="image">
   <link rel="stylesheet" href="styles.css">
   <script type="application/ld+json">
   {
@@ -53,7 +52,6 @@
     </nav>
 
     <div class="header-actions">
-      <span class="language" aria-label="Текущий язык русский">RU</span>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Открыть меню">
         <span></span><span></span>
       </button>
@@ -73,10 +71,7 @@
   <main id="main">
     <section class="hero" id="top" aria-labelledby="hero-title">
       <div class="hero-media" aria-hidden="true">
-        <picture>
-          <source media="(max-width: 767px)" srcset="assets/stallion-motion.jpg">
-          <img src="assets/hero-reference.png" alt="" width="1672" height="941" fetchpriority="high">
-        </picture>
+        <img src="assets/stallion-motion.jpg" alt="" width="1024" height="1536" fetchpriority="high">
       </div>
       <div class="hero-shade" aria-hidden="true"></div>
 
@@ -100,7 +95,6 @@
       <div class="page-shell philosophy-grid">
         <div class="philosophy-media reveal-media">
           <img src="assets/philosophy-horse.jpg" alt="Серая андалузская лошадь в туманном русском пейзаже" width="1024" height="1536" loading="lazy">
-          <div class="media-note">Временный AI-кадр для направления съёмки</div>
         </div>
 
         <div class="philosophy-copy">
@@ -125,7 +119,6 @@
         <button class="filter-button" type="button" role="tab" aria-selected="false" data-filter="stallion">Жеребцы</button>
         <button class="filter-button" type="button" role="tab" aria-selected="false" data-filter="mare">Кобылы</button>
         <button class="filter-button" type="button" role="tab" aria-selected="false" data-filter="young">Молодняк</button>
-        <button class="filter-button" type="button" role="tab" aria-selected="false" data-filter="cross">Кросс-андалузы</button>
       </div>
 
       <div class="horse-track" data-horse-track>
@@ -173,20 +166,6 @@
           </span>
         </button>
 
-        <a class="horse-card horse-card-wide reveal" href="horse.html" data-category="stallion">
-          <span class="horse-image-wrap">
-            <img src="assets/bucefalo-01.jpg" alt="Bucefalo XXXII под всадником" width="912" height="608" loading="lazy">
-          </span>
-          <span class="horse-card-copy">
-            <span class="horse-name">Bucefalo XXXII</span>
-            <span class="horse-meta">PRE, жеребец, 2007</span>
-            <span class="horse-status">Открыть профиль</span>
-          </span>
-        </a>
-      </div>
-
-      <div class="empty-state page-shell" data-empty-state hidden>
-        <p>Карточки этой категории будут добавлены после подтверждения списка и фотографий.</p>
       </div>
     </section>
 
@@ -205,10 +184,6 @@
             <div><dt>ANCCE</dt><dd>допуск в разведение</dd></div>
           </dl>
 
-          <div class="breeding-actions reveal">
-            <a class="text-link" href="horse.html">Страница Bucefalo XXXII <span aria-hidden="true">→</span></a>
-            <a class="text-link" href="https://www.lgancce.com/lgpreancce/asp-publico/arbolGenealogicoPRE/ConsultarArbolGenealogicoPRE.aspx?ID=C76JvsjHVZQ=" target="_blank" rel="noreferrer">Студбук ANCCE <span aria-hidden="true">↗</span></a>
-          </div>
         </div>
 
         <figure class="breeding-media reveal-media">
