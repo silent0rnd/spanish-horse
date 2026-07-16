@@ -510,9 +510,25 @@ summary {
 }
 
 .philosophy {
+  position: relative;
   background:
     radial-gradient(circle at 85% 22%, rgba(31, 46, 35, 0.5), transparent 33%),
     linear-gradient(180deg, var(--ink) 0%, #0d110e 18%, #0d110e 82%, var(--ink) 100%);
+}
+
+.philosophy::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0 0 auto;
+  height: clamp(140px, 16vw, 260px);
+  background: linear-gradient(180deg, var(--ink) 0%, rgba(11, 13, 12, 0.92) 28%, transparent 100%);
+  content: "";
+  pointer-events: none;
+}
+
+.philosophy > * {
+  position: relative;
+  z-index: 1;
 }
 
 .philosophy-grid {
@@ -772,6 +788,12 @@ summary {
   margin: 0;
 }
 
+@media (min-width: 901px) {
+  .breeding-media {
+    margin-top: clamp(12px, 2.6vw, 42px);
+  }
+}
+
 .breeding-media img {
   width: 100%;
   height: auto;
@@ -792,10 +814,26 @@ summary {
 }
 
 .life {
+  position: relative;
   overflow: hidden;
   background:
     radial-gradient(circle at 18% 14%, rgba(37, 53, 40, 0.46), transparent 30%),
     linear-gradient(180deg, var(--ink) 0%, #0d110e 16%, #0d110e 86%, var(--ink) 100%);
+}
+
+.life::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0 0 auto;
+  height: clamp(140px, 16vw, 260px);
+  background: linear-gradient(180deg, var(--ink) 0%, rgba(11, 13, 12, 0.92) 28%, transparent 100%);
+  content: "";
+  pointer-events: none;
+}
+
+.life > * {
+  position: relative;
+  z-index: 1;
 }
 
 .life-heading {
