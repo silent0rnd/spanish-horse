@@ -55,3 +55,19 @@ Color palette: deep forest, smoke gray, charcoal, restrained amber
 Constraints: realistic anatomy and group scale; landscape and church feel authentically Russian; no people; no text; no logos; no watermark
 Avoid: fantasy, fairy-tale glow, tourist postcard, saturated sunset, decorative frame
 ```
+
+## `assets/bucefalo-cinematic-v2.webp`
+
+```text
+Use case: photorealistic-natural
+Asset type: premium website breeding chapter photograph
+Primary request: a new cinematic full-body portrait of Bucefalo XXXII in collected trot
+Input images: Image 1: Bucefalo subject reference; Image 2: Yeguada MS hero style reference
+Scene/backdrop: dark misty Russian meadow at dawn, subtle birch woodland and low river mist
+Subject: mature gray Andalusian PRE stallion, silver dappled coat, baroque build, long mane, simple black bridle
+Style/medium: photorealistic high-end equestrian editorial photography
+Composition/framing: wide 3:2 landscape, full horse visible from ears to hooves, noble side profile
+Lighting/mood: low-key directional rim light, forest-black shadows, restrained antique-gold highlights
+Constraints: realistic anatomy and four legs; no rider; no saddle; no text; no logo; no watermark; soft dark edge falloff
+Avoid: red fabric, arena signage, modern clutter, fantasy styling, overprocessed HDR
+```

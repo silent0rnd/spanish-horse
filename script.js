@@ -21,6 +21,34 @@
     headerObserver.observe(headerScene);
   }
 
+  const sectionNavLinks = Array.from(
+    document.querySelectorAll('.desktop-nav a[href^="#"], #mobile-menu a[href^="#"]')
+  );
+  const sectionNavTargets = Array.from(document.querySelectorAll("main > section[id]"));
+
+  if (sectionNavLinks.length && sectionNavTargets.length && "IntersectionObserver" in window) {
+    const setActiveSection = (sectionId) => {
+      sectionNavLinks.forEach((link) => {
+        const active = link.getAttribute("href") === `#${sectionId}`;
+        link.classList.toggle("is-active", active);
+        if (active) link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+      });
+    };
+
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        const activeEntry = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top))[0];
+        if (activeEntry) setActiveSection(activeEntry.target.id);
+      },
+      { rootMargin: "-34% 0px -56% 0px", threshold: 0 }
+    );
+
+    sectionNavTargets.forEach((section) => sectionObserver.observe(section));
+  }
+
   const menuToggle = document.querySelector(".menu-toggle");
   const mobileMenu = document.querySelector("#mobile-menu");
 
@@ -102,24 +130,90 @@
     const dialogImage = horseDialog.querySelector("[data-dialog-image]");
     const dialogClose = horseDialog.querySelector(".dialog-close");
     const dialogContact = horseDialog.querySelector("[data-dialog-contact]");
+    const canUseViewTransition = !reducedMotion && typeof document.startViewTransition === "function";
+    let activeHorseCard = null;
+
+    const clearPortraitTransition = (sourceImage) => {
+      if (sourceImage) sourceImage.style.removeProperty("view-transition-name");
+      dialogImage.style.removeProperty("view-transition-name");
+    };
+
+    const closeHorseDialog = () => {
+      if (!horseDialog.open) return;
+      const sourceImage = activeHorseCard ? activeHorseCard.querySelector("img") : null;
+
+      if (!canUseViewTransition || !sourceImage) {
+        horseDialog.close();
+        clearPortraitTransition(sourceImage);
+        activeHorseCard = null;
+        return;
+      }
+
+      dialogImage.style.viewTransitionName = "horse-portrait";
+      sourceImage.style.viewTransitionName = "none";
+
+      const transition = document.startViewTransition(() => {
+        horseDialog.close();
+        dialogImage.style.viewTransitionName = "none";
+        sourceImage.style.viewTransitionName = "horse-portrait";
+      });
+
+      transition.finished.finally(() => {
+        clearPortraitTransition(sourceImage);
+        activeHorseCard = null;
+      });
+    };
 
     document.querySelectorAll("button.horse-card[data-name]").forEach((card) => {
-      card.addEventListener("click", () => {
+      card.addEventListener("click", async () => {
         const sourceImage = card.querySelector("img");
+        activeHorseCard = card;
         dialogTitle.textContent = card.dataset.name || "Лошадь Yeguada MS";
         dialogDetails.textContent = card.dataset.details || "Данные уточняются.";
         dialogStatus.textContent = card.dataset.status || "";
         dialogImage.src = sourceImage ? sourceImage.currentSrc || sourceImage.src : "";
         dialogImage.alt = sourceImage ? sourceImage.alt : "";
-        horseDialog.showModal();
-        dialogClose.focus();
+
+        if (dialogImage.decode) {
+          try {
+            await dialogImage.decode();
+          } catch (_) {
+            // Browser will still display the cached or fallback image.
+          }
+        }
+
+        if (!canUseViewTransition || !sourceImage) {
+          horseDialog.showModal();
+          dialogClose.focus();
+          return;
+        }
+
+        sourceImage.style.viewTransitionName = "horse-portrait";
+        dialogImage.style.viewTransitionName = "horse-portrait";
+
+        const transition = document.startViewTransition(() => {
+          horseDialog.showModal();
+          sourceImage.style.viewTransitionName = "none";
+        });
+
+        transition.ready.then(() => dialogClose.focus()).catch(() => dialogClose.focus());
+        transition.finished.finally(() => clearPortraitTransition(sourceImage));
       });
     });
 
-    dialogClose.addEventListener("click", () => horseDialog.close());
-    dialogContact.addEventListener("click", () => horseDialog.close());
+    dialogClose.addEventListener("click", closeHorseDialog);
+    dialogContact.addEventListener("click", () => {
+      const sourceImage = activeHorseCard ? activeHorseCard.querySelector("img") : null;
+      horseDialog.close();
+      clearPortraitTransition(sourceImage);
+      activeHorseCard = null;
+    });
     horseDialog.addEventListener("click", (event) => {
-      if (event.target === horseDialog) horseDialog.close();
+      if (event.target === horseDialog) closeHorseDialog();
+    });
+    horseDialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      closeHorseDialog();
     });
   }
 

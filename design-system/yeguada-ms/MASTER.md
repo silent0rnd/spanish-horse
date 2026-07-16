@@ -9,7 +9,7 @@ This file overrides the generic Liquid Glass result because it conflicts with th
 - Audience: buyers and breeders of premium Andalusian PRE horses
 - Direction: dark cinematic equestrian editorial, Spanish heritage on Russian land
 - Design variance: 7
-- Motion intensity: 4
+- Motion intensity: 6
 - Visual density: 3
 - Stack: native HTML, CSS and JavaScript
 
@@ -63,6 +63,11 @@ Serif is intentional here because the product is a heritage luxury equestrian br
 - Button hover changes color or border in 180-240ms.
 - Arrow may move 3-4px without moving the button.
 - Scroll reveal uses only opacity and translateY.
+- Hero uses one restrained curtain reveal and slow photographic depth.
+- The breeding section stays in normal document flow and never captures scrolling.
+- Breeding facts remain static and fully readable without scroll-triggered animation.
+- Horse dialogs open only after the final image crop is ready.
+- Navigation exposes the active section and page progress.
 - Respect `prefers-reduced-motion`.
 - Motion must communicate hierarchy or feedback, never decoration alone.
 
@@ -83,6 +88,14 @@ Serif is intentional here because the product is a heritage luxury equestrian br
 - Fill unused card space with a soft blurred extension of the same photograph, never plain black bars.
 - Section photos may fade into the page at top and bottom, but the subject stays clear.
 - Avoid hard image-to-background seams and excessive darkness.
+- Apply one muted olive, silver and warm-highlight grade across all photography.
+- The breeding hero image shows the full stallion without rider or casual arena clutter.
+
+## Materiality
+
+- Fixed grain is permitted at 2-3 percent opacity only.
+- A subtle fixed vignette may deepen the frame on desktop and disappears on mobile.
+- Russian plant ornament appears once as a restrained gold line, never as a repeated theme.
 
 ## Content rules
 

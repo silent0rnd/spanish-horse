@@ -62,6 +62,7 @@ html {
 }
 
 body {
+  position: relative;
   margin: 0;
   overflow-x: hidden;
   background: var(--ink);
@@ -72,13 +73,22 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+body::before {
+  position: fixed;
+  inset: 0;
+  z-index: 89;
+  pointer-events: none;
+  content: "";
+  background: radial-gradient(circle at 50% 44%, transparent 48%, rgba(2, 4, 3, 0.18) 100%);
+}
+
 body::after {
   position: fixed;
   inset: 0;
   z-index: 90;
   pointer-events: none;
   content: "";
-  opacity: 0.045;
+  opacity: 0.028;
   background-image:
     radial-gradient(circle at 20% 30%, #fff 0 0.5px, transparent 0.8px),
     radial-gradient(circle at 70% 60%, #fff 0 0.4px, transparent 0.75px);
@@ -225,6 +235,18 @@ summary {
   transition: background 0.5s var(--ease), border-color 0.5s var(--ease);
 }
 
+.site-header::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 1px;
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold), rgba(197, 163, 106, 0.2));
+}
+
 .site-header.is-scrolled,
 .site-header.is-solid {
   border-color: var(--line);
@@ -289,13 +311,32 @@ summary {
   transition: transform 0.4s var(--ease);
 }
 
-.desktop-nav a:hover {
+.desktop-nav a:hover,
+.desktop-nav a.is-active {
   color: var(--ivory);
 }
 
-.desktop-nav a:hover::after {
+.desktop-nav a:hover::after,
+.desktop-nav a.is-active::after {
   transform: scaleX(1);
   transform-origin: left;
+}
+
+.mobile-menu a.is-active {
+  color: var(--gold);
+}
+
+@supports (animation-timeline: scroll()) {
+  .site-header::after {
+    animation: page-progress linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes page-progress {
+  to {
+    transform: scaleX(1);
+  }
 }
 
 .header-actions {
@@ -335,8 +376,11 @@ summary {
 
 .mobile-menu {
   position: fixed;
-  inset: var(--header-height) 0 0;
+  inset: var(--header-height) 0 auto;
   z-index: 45;
+  height: calc(100dvh - var(--header-height));
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background:
     linear-gradient(rgba(10, 12, 11, 0.96), rgba(10, 12, 11, 0.98)),
     url("assets/farm-herd.jpg") center / cover;
@@ -366,6 +410,17 @@ summary {
   background: var(--ink);
 }
 
+.hero::before {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  content: "";
+  transform: scaleX(1);
+  transform-origin: right;
+  background: var(--ink);
+}
+
 .hero-media {
   position: absolute;
   inset: 0;
@@ -382,6 +437,7 @@ summary {
   object-fit: cover;
   object-position: center;
   filter: saturate(0.82) contrast(1.03) brightness(0.94);
+  transform-origin: 68% center;
 }
 
 .hero-shade {
@@ -405,7 +461,12 @@ summary {
 .hero-kicker {
   width: fit-content;
   padding-right: 130px;
-  background: linear-gradient(var(--line-gold), var(--line-gold)) right center / 105px 1px no-repeat;
+  background: linear-gradient(var(--line-gold), var(--line-gold)) right center / 0 1px no-repeat;
+  transition: background-size 0.9s var(--ease);
+}
+
+.hero-kicker.is-visible {
+  background-size: 105px 1px;
 }
 
 .hero-title {
@@ -551,7 +612,7 @@ summary {
   height: 100%;
   min-height: 720px;
   object-fit: cover;
-  filter: saturate(0.82) contrast(1.03) brightness(0.95);
+  filter: saturate(0.76) contrast(1.05) brightness(0.92) sepia(0.06);
 }
 
 .philosophy-media::after {
@@ -563,15 +624,29 @@ summary {
 }
 
 .ornament-rule {
-  width: min(420px, 100%);
-  height: 26px;
+  position: relative;
+  width: min(460px, 100%);
+  height: 32px;
   margin-top: 54px;
-  border-top: 1px solid var(--line-gold);
-  border-bottom: 1px solid var(--line-gold);
-  opacity: 0.75;
+  opacity: 0.58;
   background:
-    radial-gradient(ellipse at center, transparent 0 32%, var(--gold-deep) 34% 38%, transparent 40%) 0 0 / 44px 22px repeat-x,
-    radial-gradient(circle, var(--gold-deep) 0 1px, transparent 1.5px) 11px center / 22px 22px repeat-x;
+    linear-gradient(90deg, transparent, var(--line-gold) 12%, var(--line-gold) 88%, transparent) center / 100% 1px no-repeat,
+    radial-gradient(ellipse at 50% 100%, transparent 0 46%, var(--gold-deep) 48% 51%, transparent 53%) 0 2px / 46px 15px repeat-x,
+    radial-gradient(ellipse at 50% 0%, transparent 0 46%, var(--gold-deep) 48% 51%, transparent 53%) 23px 15px / 46px 15px repeat-x;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.ornament-rule::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--gold);
+  content: "";
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: var(--ink-soft);
 }
 
 .philosophy-quote {
@@ -686,14 +761,14 @@ summary {
   height: 100%;
   object-fit: contain;
   object-position: center;
-  filter: saturate(0.82) contrast(1.02) brightness(0.98);
+  filter: saturate(0.76) contrast(1.04) brightness(0.94) sepia(0.05);
   transition: transform 0.55s var(--ease), filter 0.35s ease;
 }
 
 .horse-card:hover .horse-image-wrap img,
 .horse-card:focus-visible .horse-image-wrap img {
   transform: scale(1.018);
-  filter: saturate(0.94) contrast(1.02) brightness(1);
+  filter: saturate(0.9) contrast(1.04) brightness(0.99) sepia(0.03);
 }
 
 .horse-card-copy {
@@ -734,7 +809,7 @@ summary {
 
 .breeding {
   min-height: 100dvh;
-  overflow: hidden;
+  overflow: clip;
   background: linear-gradient(180deg, var(--ink) 0%, #0d120f 16%, #0d120f 84%, var(--ink) 100%);
 }
 
@@ -747,6 +822,7 @@ summary {
 
 .breeding-grid {
   position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: minmax(520px, 1.08fr) minmax(430px, 0.92fr);
   gap: clamp(60px, 7vw, 130px);
@@ -798,7 +874,7 @@ summary {
   width: 100%;
   height: auto;
   object-fit: contain;
-  filter: saturate(0.76) contrast(1.02) brightness(1.02);
+  filter: saturate(0.74) contrast(1.05) brightness(0.94) sepia(0.06);
   -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 7%, #000 93%, transparent 100%);
   mask-image: linear-gradient(180deg, transparent 0, #000 7%, #000 93%, transparent 100%);
 }
@@ -876,7 +952,7 @@ summary {
   height: auto;
   aspect-ratio: 16 / 10;
   object-fit: cover;
-  filter: saturate(0.78) contrast(1.02) brightness(0.94);
+  filter: saturate(0.72) contrast(1.05) brightness(0.9) sepia(0.07);
   -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 6%, #000 94%, transparent 100%);
   mask-image: linear-gradient(180deg, transparent 0, #000 6%, #000 94%, transparent 100%);
   transition: transform 0.7s var(--ease), filter 0.4s ease;
@@ -884,7 +960,7 @@ summary {
 
 .life-frame:hover img {
   transform: scale(1.015);
-  filter: saturate(0.86) contrast(1.02) brightness(0.9);
+  filter: saturate(0.84) contrast(1.05) brightness(0.94) sepia(0.04);
 }
 
 .contacts {
@@ -1163,9 +1239,17 @@ summary {
   color: var(--ivory);
 }
 
+.horse-dialog[open] {
+  animation: horse-dialog-enter 0.42s var(--ease) both;
+}
+
 .horse-dialog::backdrop {
   background: rgba(4, 6, 5, 0.88);
   backdrop-filter: blur(8px);
+}
+
+.horse-dialog[open]::backdrop {
+  animation: horse-backdrop-enter 0.3s ease-out both;
 }
 
 .dialog-close {
@@ -1194,19 +1278,26 @@ summary {
 
 .dialog-image-wrap {
   min-height: 610px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(44, 58, 46, 0.55), transparent 58%),
+    #0b0e0c;
 }
 
 .dialog-image-wrap img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  filter: saturate(0.76);
+  object-fit: contain;
+  filter: saturate(0.78) contrast(1.04) brightness(0.95) sepia(0.04);
 }
 
 .dialog-copy {
   display: grid;
   padding: clamp(32px, 5vw, 76px);
   align-content: center;
+}
+
+.horse-dialog[open] .dialog-copy {
+  animation: horse-dialog-copy-enter 0.58s var(--ease) 0.12s both;
 }
 
 .dialog-status {
@@ -1233,6 +1324,40 @@ summary {
   margin: 22px 0 34px;
   color: var(--smoke);
   font-size: 0.78rem;
+}
+
+@keyframes horse-dialog-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+  }
+}
+
+@keyframes horse-backdrop-enter {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes horse-dialog-copy-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+::view-transition-group(horse-portrait) {
+  animation-duration: 0.68s;
+  animation-timing-function: var(--ease);
+}
+
+::view-transition-image-pair(horse-portrait) {
+  isolation: auto;
+}
+
+::view-transition-old(horse-portrait),
+::view-transition-new(horse-portrait) {
+  mix-blend-mode: normal;
 }
 
 .image-error {
@@ -1414,7 +1539,44 @@ summary {
   gap: 14px;
 }
 
+@keyframes hero-curtain-reveal {
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes hero-image-arrival {
+  from {
+    transform: scale(1.045);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes hero-scroll-depth {
+  to {
+    transform: translateY(4vh) scale(1.025);
+  }
+}
+
+@keyframes hero-copy-drift {
+  to {
+    opacity: 0.34;
+    transform: translateY(5vh);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
+  .is-ready .hero::before {
+    animation: hero-curtain-reveal 1.05s var(--ease) 0.08s both;
+  }
+
+  .is-ready .hero-media img {
+    animation: hero-image-arrival 1.75s var(--ease) 0.08s both;
+  }
+
   .reveal {
     opacity: 0;
     transform: translateY(18px);
@@ -1432,15 +1594,29 @@ summary {
   }
 
   .hero .reveal:nth-child(2) {
-    transition-delay: 0.08s;
+    transition-delay: 0.34s;
   }
 
   .hero .reveal:nth-child(3) {
-    transition-delay: 0.14s;
+    transition-delay: 0.46s;
   }
 
   .hero .reveal:nth-child(4) {
-    transition-delay: 0.2s;
+    transition-delay: 0.58s;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .hero-media {
+      animation: hero-scroll-depth linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 100vh;
+    }
+
+    .hero-content {
+      animation: hero-copy-drift linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 100vh;
+    }
   }
 }
 
@@ -1594,6 +1770,14 @@ summary {
     font-size: 16px;
   }
 
+  body::before {
+    display: none;
+  }
+
+  body::after {
+    opacity: 0.018;
+  }
+
   .section {
     padding-block: 76px;
   }
@@ -1643,6 +1827,10 @@ summary {
   .hero-kicker {
     margin-bottom: 16px;
     padding-right: 90px;
+    background-size: 0 1px;
+  }
+
+  .hero-kicker.is-visible {
     background-size: 70px 1px;
   }
 
@@ -1890,6 +2078,10 @@ summary {
     opacity: 1 !important;
     transform: none !important;
     clip-path: none !important;
+  }
+
+  .hero::before {
+    display: none;
   }
 }
 
