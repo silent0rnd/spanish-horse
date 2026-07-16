@@ -8,11 +8,12 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="Yeguada MS - испанская кровь, русская земля">
   <meta property="og:description" content="Частная конеферма андалузских лошадей Pura Raza Espanola в Тульской области.">
-  <meta property="og:image" content="assets/stallion-motion.jpg">
+  <meta property="og:image" content="assets/hero-cinematic-v2.png">
   <meta property="og:locale" content="ru_RU">
   <title>Yeguada MS - андалузские лошади в России</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/stallion-motion.jpg" as="image">
+  <link rel="preload" href="assets/hero-cinematic-v2.webp" as="image" media="(min-width: 768px)">
+  <link rel="preload" href="assets/hero-cinematic-mobile-v2.webp" as="image" media="(max-width: 767px)">
   <link rel="stylesheet" href="styles.css">
   <script type="application/ld+json">
   {
@@ -71,7 +72,10 @@
   <main id="main">
     <section class="hero" id="top" aria-labelledby="hero-title">
       <div class="hero-media" aria-hidden="true">
-        <img src="assets/stallion-motion.jpg" alt="" width="1024" height="1536" fetchpriority="high">
+        <picture>
+          <source media="(max-width: 767px)" srcset="assets/hero-cinematic-mobile-v2.webp" width="941" height="1672">
+          <img src="assets/hero-cinematic-v2.webp" alt="" width="1672" height="941" fetchpriority="high">
+        </picture>
       </div>
       <div class="hero-shade" aria-hidden="true"></div>
 
@@ -83,8 +87,8 @@
         </h1>
         <p class="hero-copy reveal">Yeguada MS. Разведение андалузских лошадей PRE в Тульской области.</p>
         <div class="hero-cta reveal">
-          <a class="button button-primary magnetic" href="#horses">Посмотреть лошадей <span aria-hidden="true">→</span></a>
-          <a class="button button-outline magnetic" href="#contacts">Запланировать визит <span aria-hidden="true">→</span></a>
+          <a class="button button-primary" href="#horses">Посмотреть лошадей <span aria-hidden="true">→</span></a>
+          <a class="button button-outline" href="#contacts">Запланировать визит <span aria-hidden="true">→</span></a>
         </div>
       </div>
 
@@ -111,7 +115,7 @@
     <section class="horses section" id="horses" aria-labelledby="horses-title">
       <div class="page-shell section-heading">
         <h2 id="horses-title" class="section-title reveal">Лошади Yeguada MS</h2>
-        <p class="lead reveal">Подтверждённые данные с текущего сайта. Точные фотографии для карточек перед публикацией нужно согласовать с владельцем.</p>
+        <p class="lead reveal">Жеребцы, кобылы и молодняк фермы. Откройте карточку, чтобы узнать основные данные о каждой лошади.</p>
       </div>
 
       <div class="horse-filters page-shell" role="tablist" aria-label="Категории лошадей">
@@ -123,8 +127,8 @@
 
       <div class="horse-track" data-horse-track>
         <button class="horse-card horse-card-tall reveal" type="button" data-category="sale stallion young" data-name="Магнифико YAD" data-details="Жеребчик PRE, 2023 года рождения. Буланая масть. Внук Bucefalo XXXII. Знает корду. Ожидаемый рост около 165 см." data-status="В продаже">
-          <span class="horse-image-wrap">
-            <img src="assets/stallion-motion.jpg" alt="Временный портрет серой андалузской лошади в движении" width="1024" height="1536" loading="lazy">
+          <span class="horse-image-wrap" style="--card-image: url('assets/stallion-motion.jpg')">
+            <img src="assets/stallion-motion.jpg" alt="Серая андалузская лошадь в движении" width="1024" height="1536" loading="lazy">
           </span>
           <span class="horse-card-copy">
             <span class="horse-name">Магнифико YAD</span>
@@ -134,7 +138,7 @@
         </button>
 
         <button class="horse-card horse-card-wide reveal" type="button" data-category="sale stallion" data-name="Алеко" data-details="Вороной жеребец PRE, 2009 года рождения. Допущен в разведение, имеет испанские документы и 17 жеребят. Находится в Свердловской области." data-status="В продаже">
-          <span class="horse-image-wrap">
+          <span class="horse-image-wrap" style="--card-image: url('assets/bucefalo-02.jpg')">
             <img src="assets/bucefalo-02.jpg" alt="Вороной конь в осеннем поле, архив Yeguada MS" width="1080" height="1174" loading="lazy">
           </span>
           <span class="horse-card-copy">
@@ -145,7 +149,7 @@
         </button>
 
         <button class="horse-card horse-card-portrait reveal" type="button" data-category="sale stallion young" data-name="Новилеро" data-details="Буланый андалузский жеребец, 2022 года рождения. Рост 167 см. Мягко заезжен, спокойно работает рядом с другими лошадьми. Находится в Подмосковье." data-status="В продаже">
-          <span class="horse-image-wrap">
+          <span class="horse-image-wrap" style="--card-image: url('assets/breeding-03.jpg')">
             <img src="assets/breeding-03.jpg" alt="Буланая лошадь в поле, архив Yeguada MS" width="851" height="851" loading="lazy">
           </span>
           <span class="horse-card-copy">
@@ -156,7 +160,7 @@
         </button>
 
         <button class="horse-card horse-card-low reveal" type="button" data-category="sale mare young" data-name="Далли" data-details="Алтайская чубарая кобыла, 2021 года рождения. Заезжена. Выращивается на больших пастбищах фермы. Информация о росте и происхождении уточняется." data-status="В продаже">
-          <span class="horse-image-wrap">
+          <span class="horse-image-wrap" style="--card-image: url('assets/breeding-02.jpg')">
             <img src="assets/breeding-02.jpg" alt="Чубарая молодая лошадь в поле, архив Yeguada MS" width="1000" height="1000" loading="lazy">
           </span>
           <span class="horse-card-copy">
@@ -172,6 +176,11 @@
     <section class="breeding section" id="breeding" aria-labelledby="breeding-title">
       <div class="breeding-backdrop" aria-hidden="true"></div>
       <div class="page-shell breeding-grid">
+        <figure class="breeding-media reveal-media">
+          <img src="assets/bucefalo-01.jpg" alt="Серый жеребец Bucefalo XXXII под всадником" width="912" height="608" loading="lazy">
+          <figcaption>Bucefalo XXXII, основной производитель Yeguada MS.</figcaption>
+        </figure>
+
         <div class="breeding-copy">
           <p class="section-kicker">Селекционная программа</p>
           <h2 id="breeding-title" class="section-title reveal">Широкий ход. Барочный тип. Ясный характер.</h2>
@@ -185,11 +194,6 @@
           </dl>
 
         </div>
-
-        <figure class="breeding-media reveal-media">
-          <img src="assets/bucefalo-01.jpg" alt="Серый жеребец Bucefalo XXXII под всадником" width="912" height="608" loading="lazy">
-          <figcaption>Архив Yeguada MS. Bucefalo XXXII.</figcaption>
-        </figure>
       </div>
     </section>
 
@@ -202,7 +206,7 @@
       <div class="life-gallery" aria-label="Жизнь на ферме">
         <figure class="life-frame life-frame-wide reveal-media">
           <img src="assets/farm-herd.jpg" alt="Табун андалузских лошадей у реки и русского леса" width="1536" height="1024" loading="lazy">
-          <figcaption>Временный AI-кадр для направления натурной съёмки</figcaption>
+          <figcaption>Табунное содержание у реки</figcaption>
         </figure>
         <figure class="life-frame reveal-media">
           <img src="assets/pasture.jpg" alt="Кобылы и жеребёнок на пастбище Yeguada MS" width="1080" height="720" loading="lazy">
@@ -259,7 +263,7 @@
               <option value="visit">Знакомство с фермой</option>
             </select>
           </div>
-          <button class="button button-primary magnetic" type="submit">Подготовить обращение <span aria-hidden="true">→</span></button>
+          <button class="button button-primary" type="submit">Подготовить обращение <span aria-hidden="true">→</span></button>
           <p class="form-hint">Форма не отправляет данные автоматически. После подготовки выберите удобный мессенджер.</p>
           <div class="form-success" role="status" tabindex="-1" hidden>
             <strong>Обращение подготовлено.</strong>
@@ -273,7 +277,7 @@
         <div class="map-placeholder">
           <div class="map-river" aria-hidden="true"></div>
           <strong>Тульская область</strong>
-          <span>Точная точка и схема проезда требуют подтверждения владельца</span>
+          <span>Точный маршрут высылаем после согласования визита</span>
         </div>
 
         <div class="faq" aria-label="Частые вопросы">
@@ -301,7 +305,7 @@
         <span class="brand-wordmark">Yeguada MS</span>
       </a>
       <p>Частная конеферма андалузских лошадей Pura Raza Española.</p>
-      <p class="legal-placeholder">Юридические реквизиты, политика конфиденциальности и согласие на обработку данных - добавить после получения от владельца.</p>
+      <p class="legal-placeholder">Информация на сайте не является публичной офертой.</p>
       <span>© <span data-year></span> Yeguada MS</span>
     </div>
   </footer>
@@ -314,7 +318,7 @@
         <span class="dialog-status" data-dialog-status></span>
         <h2 id="dialog-title" data-dialog-title></h2>
         <p data-dialog-details></p>
-        <p class="dialog-note">Цена, происхождение, подготовка, характер и ветеринарные данные требуют подтверждения для каждой лошади.</p>
+        <p class="dialog-note">Актуальные данные, дополнительные фото и документы предоставим по запросу.</p>
         <a class="button button-primary" href="#contacts" data-dialog-contact>Запросить материалы <span aria-hidden="true">→</span></a>
       </div>
     </div>
