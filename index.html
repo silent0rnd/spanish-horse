@@ -12,7 +12,8 @@
   <meta property="og:locale" content="ru_RU">
   <title>Yeguada MS - андалузские лошади в России</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/hero-reference.png" as="image">
+  <link rel="preload" href="assets/hero-reference.png" as="image" media="(min-width: 768px)">
+  <link rel="preload" href="assets/stallion-motion.jpg" as="image" media="(max-width: 767px)">
   <link rel="stylesheet" href="styles.css">
   <script type="application/ld+json">
   {
@@ -73,7 +74,7 @@
     <section class="hero" id="top" aria-labelledby="hero-title">
       <div class="hero-media" aria-hidden="true">
         <picture>
-          <source media="(max-width: 767px)" srcset="assets/stallion-motion.png">
+          <source media="(max-width: 767px)" srcset="assets/stallion-motion.jpg">
           <img src="assets/hero-reference.png" alt="" width="1672" height="941" fetchpriority="high">
         </picture>
       </div>
@@ -98,12 +99,12 @@
     <section class="philosophy section" id="philosophy" aria-labelledby="philosophy-title">
       <div class="page-shell philosophy-grid">
         <div class="philosophy-media reveal-media">
-          <img src="assets/philosophy-horse.png" alt="Серая андалузская лошадь в туманном русском пейзаже" width="1024" height="1536" loading="lazy">
+          <img src="assets/philosophy-horse.jpg" alt="Серая андалузская лошадь в туманном русском пейзаже" width="1024" height="1536" loading="lazy">
           <div class="media-note">Временный AI-кадр для направления съёмки</div>
         </div>
 
         <div class="philosophy-copy">
-          <p class="section-kicker">Основана Марией Солдатовой</p>
+          <p class="founder-line">Основана Марией Солдатовой</p>
           <h2 id="philosophy-title" class="section-title reveal">Порода начинается с отношения.</h2>
           <p class="lead reveal">Yeguada MS разводит чистопородных PRE и кросс-андалузов. Цель фермы - широкие движения, барочный экстерьер и доброжелательный характер.</p>
           <p class="body-copy reveal">Лошади растут в табуне, много двигаются по холмистым пастбищам и с раннего возраста общаются с человеком. Ферма сохраняет узнаваемый испанский тип в условиях русской земли.</p>
@@ -130,7 +131,7 @@
       <div class="horse-track" data-horse-track>
         <button class="horse-card horse-card-tall reveal" type="button" data-category="sale stallion young" data-name="Магнифико YAD" data-details="Жеребчик PRE, 2023 года рождения. Буланая масть. Внук Bucefalo XXXII. Знает корду. Ожидаемый рост около 165 см." data-status="В продаже">
           <span class="horse-image-wrap">
-            <img src="assets/stallion-motion.png" alt="Временный портрет серой андалузской лошади в движении" width="1024" height="1536" loading="lazy">
+            <img src="assets/stallion-motion.jpg" alt="Временный портрет серой андалузской лошади в движении" width="1024" height="1536" loading="lazy">
           </span>
           <span class="horse-card-copy">
             <span class="horse-name">Магнифико YAD</span>
@@ -225,7 +226,7 @@
 
       <div class="life-gallery" aria-label="Жизнь на ферме">
         <figure class="life-frame life-frame-wide reveal-media">
-          <img src="assets/farm-herd.png" alt="Табун андалузских лошадей у реки и русского леса" width="1536" height="1024" loading="lazy">
+          <img src="assets/farm-herd.jpg" alt="Табун андалузских лошадей у реки и русского леса" width="1536" height="1024" loading="lazy">
           <figcaption>Временный AI-кадр для направления натурной съёмки</figcaption>
         </figure>
         <figure class="life-frame reveal-media">
@@ -333,7 +334,7 @@
   <dialog class="horse-dialog" id="horse-dialog" aria-labelledby="dialog-title">
     <button class="dialog-close" type="button" aria-label="Закрыть">Закрыть</button>
     <div class="dialog-layout">
-      <div class="dialog-image-wrap"><img src="" alt="" data-dialog-image></div>
+      <div class="dialog-image-wrap"><img alt="" data-dialog-image></div>
       <div class="dialog-copy">
         <span class="dialog-status" data-dialog-status></span>
         <h2 id="dialog-title" data-dialog-title></h2>

@@ -144,6 +144,12 @@ summary {
   line-height: 1.55;
 }
 
+.founder-line {
+  margin: 0 0 24px;
+  color: var(--gold);
+  font-size: 0.84rem;
+}
+
 .body-copy {
   max-width: 620px;
   margin: 24px 0 0;
@@ -298,7 +304,7 @@ summary {
   z-index: 45;
   background:
     linear-gradient(rgba(10, 12, 11, 0.96), rgba(10, 12, 11, 0.98)),
-    url("assets/farm-herd.png") center / cover;
+    url("assets/farm-herd.jpg") center / cover;
 }
 
 .mobile-menu nav {
@@ -338,7 +344,9 @@ summary {
 
 .hero-media img {
   object-fit: cover;
-  object-position: 70% center;
+  object-position: 100% center;
+  transform: scale(1.15);
+  transform-origin: 72% 52%;
   filter: saturate(0.82) contrast(1.04) brightness(0.82);
 }
 
@@ -347,7 +355,7 @@ summary {
   inset: 0;
   background:
     linear-gradient(90deg, #0a0c0b 0%, rgba(10, 12, 11, 0.98) 31%, rgba(10, 12, 11, 0.72) 49%, rgba(10, 12, 11, 0.08) 78%),
-    linear-gradient(180deg, rgba(10, 12, 11, 0.62), transparent 22%, transparent 68%, #0a0c0b 100%);
+    linear-gradient(180deg, rgba(10, 12, 11, 0.96), transparent 17%, transparent 68%, #0a0c0b 100%);
 }
 
 .hero-content {
@@ -355,7 +363,7 @@ summary {
   z-index: 2;
   display: grid;
   min-height: 100dvh;
-  padding-top: calc(var(--header-height) + 28px);
+  padding-top: calc(var(--header-height) + 18px);
   padding-bottom: 80px;
   align-content: center;
 }
@@ -370,7 +378,7 @@ summary {
   max-width: 830px;
   margin: 0;
   font-family: var(--display);
-  font-size: clamp(4rem, 6.8vw, 8.1rem);
+  font-size: clamp(4rem, 6.8vw, 7.1rem);
   font-weight: 400;
   letter-spacing: -0.045em;
   line-height: 0.92;
@@ -857,7 +865,7 @@ summary {
   background:
     linear-gradient(180deg, var(--ink) 0, transparent 28%, var(--ink) 100%),
     linear-gradient(90deg, var(--ink) 0 32%, transparent 72%),
-    url("assets/farm-herd.png") center / cover;
+    url("assets/farm-herd.jpg") center / cover;
   filter: saturate(0.5);
 }
 
@@ -1259,7 +1267,7 @@ summary {
   z-index: 2;
   display: grid;
   min-height: 100dvh;
-  padding-top: calc(var(--header-height) + 24px);
+  padding-top: calc(var(--header-height) + 18px);
   padding-bottom: 80px;
   align-content: center;
 }
@@ -1355,7 +1363,7 @@ summary {
 .horse-contact {
   background:
     linear-gradient(rgba(10, 12, 11, 0.84), rgba(10, 12, 11, 0.92)),
-    url("assets/farm-herd.png") center / cover;
+    url("assets/farm-herd.jpg") center / cover;
 }
 
 .horse-contact-grid {
@@ -1470,13 +1478,14 @@ summary {
 
   .hero-media img {
     object-position: 62% center;
-    filter: saturate(0.72) brightness(0.62);
+    transform: none;
+    filter: saturate(0.76) brightness(0.82);
   }
 
   .hero-shade {
     background:
-      linear-gradient(90deg, rgba(10, 12, 11, 0.94), rgba(10, 12, 11, 0.34)),
-      linear-gradient(180deg, rgba(10, 12, 11, 0.5), transparent 32%, #0a0c0b 100%);
+      linear-gradient(90deg, rgba(10, 12, 11, 0.78), rgba(10, 12, 11, 0.08)),
+      linear-gradient(180deg, rgba(10, 12, 11, 0.36), transparent 34%, rgba(10, 12, 11, 0.26) 58%, #0a0c0b 100%);
   }
 
   .hero-transition {
@@ -1576,7 +1585,7 @@ summary {
 
   .hero-title {
     max-width: 92vw;
-    font-size: clamp(3.5rem, 17vw, 5.5rem);
+    font-size: clamp(2.75rem, 11.2vw, 3.7rem);
     line-height: 0.91;
   }
 
@@ -1774,7 +1783,7 @@ summary {
 
 @media (max-width: 390px) {
   .hero-title {
-    font-size: 3.35rem;
+    font-size: 2.75rem;
   }
 
   .section-title {

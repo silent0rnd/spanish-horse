@@ -19,7 +19,8 @@ npx serve .
 - Подтверждённые факты и контакты собраны с текущего сайта `andaluz.ru`.
 - Файлы `bucefalo-*`, `breeding-*`, `crosses.jpg`, `ranch-*`, `pasture.jpg` сохранены с текущего сайта Yeguada MS.
 - `hero-reference.png` предоставлен пользователем.
-- `philosophy-horse.png`, `stallion-motion.png`, `farm-herd.png` созданы через встроенный imagegen как временные материалы для визуального направления.
+- `philosophy-horse.jpg`, `stallion-motion.jpg`, `farm-herd.jpg` созданы через встроенный imagegen как временные материалы для визуального направления.
+- Точные промпты сохранены в `ASSET_PROMPTS.md`.
 
 ## Перед публикацией
 
