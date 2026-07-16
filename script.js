@@ -130,38 +130,17 @@
     const dialogImage = horseDialog.querySelector("[data-dialog-image]");
     const dialogClose = horseDialog.querySelector(".dialog-close");
     const dialogContact = horseDialog.querySelector("[data-dialog-contact]");
-    const canUseViewTransition = !reducedMotion && typeof document.startViewTransition === "function";
     let activeHorseCard = null;
-
-    const clearPortraitTransition = (sourceImage) => {
-      if (sourceImage) sourceImage.style.removeProperty("view-transition-name");
-      dialogImage.style.removeProperty("view-transition-name");
-    };
+    let dialogRevealFrame = 0;
 
     const closeHorseDialog = () => {
       if (!horseDialog.open) return;
-      const sourceImage = activeHorseCard ? activeHorseCard.querySelector("img") : null;
-
-      if (!canUseViewTransition || !sourceImage) {
-        horseDialog.close();
-        clearPortraitTransition(sourceImage);
-        activeHorseCard = null;
-        return;
-      }
-
-      dialogImage.style.viewTransitionName = "horse-portrait";
-      sourceImage.style.viewTransitionName = "none";
-
-      const transition = document.startViewTransition(() => {
-        horseDialog.close();
-        dialogImage.style.viewTransitionName = "none";
-        sourceImage.style.viewTransitionName = "horse-portrait";
-      });
-
-      transition.finished.finally(() => {
-        clearPortraitTransition(sourceImage);
-        activeHorseCard = null;
-      });
+      window.cancelAnimationFrame(dialogRevealFrame);
+      horseDialog.classList.remove("is-preparing");
+      horseDialog.close();
+      document.body.classList.remove("dialog-open");
+      activeHorseCard?.focus({ preventScroll: true });
+      activeHorseCard = null;
     };
 
     document.querySelectorAll("button.horse-card[data-name]").forEach((card) => {
@@ -173,6 +152,7 @@
         dialogStatus.textContent = card.dataset.status || "";
         dialogImage.src = sourceImage ? sourceImage.currentSrc || sourceImage.src : "";
         dialogImage.alt = sourceImage ? sourceImage.alt : "";
+        horseDialog.classList.add("is-preparing");
 
         if (dialogImage.decode) {
           try {
@@ -182,30 +162,27 @@
           }
         }
 
-        if (!canUseViewTransition || !sourceImage) {
-          horseDialog.showModal();
-          dialogClose.focus();
-          return;
-        }
+        if (activeHorseCard !== card) return;
 
-        sourceImage.style.viewTransitionName = "horse-portrait";
-        dialogImage.style.viewTransitionName = "horse-portrait";
-
-        const transition = document.startViewTransition(() => {
-          horseDialog.showModal();
-          sourceImage.style.viewTransitionName = "none";
+        document.body.classList.add("dialog-open");
+        horseDialog.showModal();
+        horseDialog.getBoundingClientRect();
+        dialogRevealFrame = window.requestAnimationFrame(() => {
+          dialogRevealFrame = window.requestAnimationFrame(() => {
+            if (!horseDialog.open) return;
+            horseDialog.classList.remove("is-preparing");
+            dialogClose.focus({ preventScroll: true });
+          });
         });
-
-        transition.ready.then(() => dialogClose.focus()).catch(() => dialogClose.focus());
-        transition.finished.finally(() => clearPortraitTransition(sourceImage));
       });
     });
 
     dialogClose.addEventListener("click", closeHorseDialog);
     dialogContact.addEventListener("click", () => {
-      const sourceImage = activeHorseCard ? activeHorseCard.querySelector("img") : null;
+      window.cancelAnimationFrame(dialogRevealFrame);
       horseDialog.close();
-      clearPortraitTransition(sourceImage);
+      horseDialog.classList.remove("is-preparing");
+      document.body.classList.remove("dialog-open");
       activeHorseCard = null;
     });
     horseDialog.addEventListener("click", (event) => {
