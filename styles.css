@@ -50,6 +50,20 @@
   --shell: min(88vw, 1500px);
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --header-height: 76px;
+
+  /* rhythm */
+  --space-2xs: 8px;
+  --space-xs: 14px;
+  --space-sm: 24px;
+  --space-md: 38px;
+  --space-lg: clamp(48px, 5vw, 72px);
+  --space-xl: clamp(52px, 5.5vw, 88px);
+  --space-2xl: clamp(64px, 7vw, 112px);
+  --rule: 1px;
+
+  /* ornament */
+  --orn-opacity: 0.5;
+  --orn-plate-opacity: 0.05;
 }
 
 * {
@@ -161,7 +175,7 @@ summary {
 
 .section {
   position: relative;
-  padding-block: clamp(88px, 11vw, 180px);
+  padding-block: clamp(52px, 5.5vw, 88px);
 }
 
 .section-title {
@@ -213,6 +227,204 @@ summary {
   line-height: 1.72;
 }
 
+/* ============================================================
+   ORNAMENT SYSTEM - "Шов"
+
+   Русский ромб с точкой ("засеянное поле" из прялочной резьбы)
+   и испанский ромб решётки азулежу - геометрически одна фигура,
+   прочитанная двумя способами. Из неё разворачиваются оба
+   семейства мотивов, и на этом стыке держится вся графика.
+
+   Мотив меняется сверху вниз: у первого экрана шов испанский,
+   к нижним секциям становится русским. Орнамент здесь не декор,
+   а повествование.
+
+   Реализация: мотивы - это маски, поэтому цвет всегда приходит
+   из токенов и остаётся одним золотом. Никаких заливок, обводка
+   1px, непрозрачность держится через --orn-opacity.
+   ============================================================ */
+
+.seam {
+  position: relative;
+  width: 100%;
+  height: 16px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+}
+
+.seam::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: var(--gold-deep);
+  opacity: var(--orn-opacity);
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+/* Испанский: решётка азулежу, два пересекающихся зигзага */
+.seam--es::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 8L12 2L24 8L36 2L48 8'/%3E%3Cpath d='M0 8L12 14L24 8L36 14L48 8'/%3E%3C/g%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 8L12 2L24 8L36 2L48 8'/%3E%3Cpath d='M0 8L12 14L24 8L36 14L48 8'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-size: 48px 16px;
+  mask-size: 48px 16px;
+}
+
+/* Стык: решётка перетекает в русский ромб */
+.seam--mixed::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 8L12 2L24 8L36 2L48 8'/%3E%3Cpath d='M0 8L12 14L24 8L36 14L48 8'/%3E%3Cpath d='M48 8H62M82 8H96'/%3E%3Cpath d='M72 2L82 8L72 14L62 8Z'/%3E%3C/g%3E%3Ccircle cx='72' cy='8' r='1.5' fill='%23000'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 8L12 2L24 8L36 2L48 8'/%3E%3Cpath d='M0 8L12 14L24 8L36 14L48 8'/%3E%3Cpath d='M48 8H62M82 8H96'/%3E%3Cpath d='M72 2L82 8L72 14L62 8Z'/%3E%3C/g%3E%3Ccircle cx='72' cy='8' r='1.5' fill='%23000'/%3E%3C/svg%3E");
+  -webkit-mask-size: 96px 16px;
+  mask-size: 96px 16px;
+}
+
+/* Русский: засеянное поле, ромб с точкой и берёзовые насечки */
+.seam--ru::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 8H14M34 8H48'/%3E%3Cpath d='M24 2L34 8L24 14L14 8Z'/%3E%3Cpath d='M5 4.5V11.5M43 4.5V11.5'/%3E%3C/g%3E%3Ccircle cx='24' cy='8' r='1.5' fill='%23000'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 8H14M34 8H48'/%3E%3Cpath d='M24 2L34 8L24 14L14 8Z'/%3E%3Cpath d='M5 4.5V11.5M43 4.5V11.5'/%3E%3C/g%3E%3Ccircle cx='24' cy='8' r='1.5' fill='%23000'/%3E%3C/svg%3E");
+  -webkit-mask-size: 48px 16px;
+  mask-size: 48px 16px;
+}
+
+/* Шов на верхней кромке секции, поверх её отступа.
+   Центрируется отступами, а не transform: transform здесь
+   занят анимацией появления .reveal. */
+.seam--wide {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  width: var(--shell);
+  margin-inline: auto;
+}
+
+.seam--short {
+  width: min(460px, 100%);
+}
+
+/* Вертикальный шов диптиха: хайрлайн, ромбы и берёзовые насечки */
+.seam-v {
+  position: relative;
+  width: 16px;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
+}
+
+.seam-v::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: var(--gold);
+  opacity: var(--orn-opacity);
+  -webkit-mask-repeat: repeat-y;
+  mask-repeat: repeat-y;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: 16px 64px;
+  mask-size: 16px 64px;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='64'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M8 0V5M8 19V64'/%3E%3Cpath d='M8 5L14 12L8 19L2 12Z'/%3E%3Cpath d='M4 32H12M5 40H11M4 48H12M5 56H11'/%3E%3C/g%3E%3Ccircle cx='8' cy='12' r='1.5' fill='%23000'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='64'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M8 0V5M8 19V64'/%3E%3Cpath d='M8 5L14 12L8 19L2 12Z'/%3E%3Cpath d='M4 32H12M5 40H11M4 48H12M5 56H11'/%3E%3C/g%3E%3Ccircle cx='8' cy='12' r='1.5' fill='%23000'/%3E%3C/svg%3E");
+}
+
+/* Фриз: зубец северной причелины, для кромки футера */
+.frieze {
+  width: 100%;
+  height: 22px;
+  background: var(--gold-deep);
+  opacity: 0.36;
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  -webkit-mask-size: 48px 22px;
+  mask-size: 48px 22px;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='22'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 1.5H48'/%3E%3Cpath d='M0 1.5L12 15L24 1.5L36 15L48 1.5'/%3E%3C/g%3E%3Ccircle cx='12' cy='18.5' r='1.3' fill='%23000'/%3E%3Ccircle cx='36' cy='18.5' r='1.3' fill='%23000'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='22'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 1.5H48'/%3E%3Cpath d='M0 1.5L12 15L24 1.5L36 15L48 1.5'/%3E%3C/g%3E%3Ccircle cx='12' cy='18.5' r='1.3' fill='%23000'/%3E%3Ccircle cx='36' cy='18.5' r='1.3' fill='%23000'/%3E%3C/svg%3E");
+}
+
+/* Розетка-подложка под цитатами и цифрами */
+.plate {
+  position: absolute;
+  z-index: 0;
+  width: clamp(280px, 32vw, 520px);
+  aspect-ratio: 1;
+  color: var(--gold);
+  opacity: var(--orn-plate-opacity);
+  pointer-events: none;
+}
+
+.plate svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Номер секции: ромб, римская цифра, уходящий хайрлайн */
+.section-number {
+  display: flex;
+  width: min(240px, 100%);
+  margin: 0 0 var(--space-sm);
+  gap: var(--space-xs);
+  align-items: center;
+  color: var(--gold);
+  font-family: var(--display);
+  font-size: 0.92rem;
+  letter-spacing: 0.28em;
+}
+
+.section-number span {
+  flex: 0 0 auto;
+}
+
+.section-number::before {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--gold-deep);
+  content: "";
+  transform: rotate(45deg);
+}
+
+.section-number::after {
+  flex: 1;
+  max-width: 120px;
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, var(--line-gold), transparent);
+}
+
+/* Угловые марки карточки: только два угла по диагонали */
+.corner-frame {
+  position: absolute;
+  z-index: 3;
+  inset: 7px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.corner-frame::before,
+.corner-frame::after {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--line-gold);
+  content: "";
+}
+
+.corner-frame::before {
+  top: 0;
+  left: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.corner-frame::after {
+  right: 0;
+  bottom: 0;
+  border-top: 0;
+  border-left: 0;
+}
+
 .is-loading main,
 .is-loading .site-header {
   opacity: 0;
@@ -239,16 +451,54 @@ summary {
   transition: background 0.5s var(--ease), border-color 0.5s var(--ease);
 }
 
-.site-header::after {
+/* Шов-прогресс в шапке.
+   Мотивы продублированы с viewBox: тайлы секционных швов заданы без
+   него и потому не масштабируются, а здесь нужна высота 12px. */
+.header-seam {
   position: absolute;
   right: 0;
   bottom: -1px;
   left: 0;
-  height: 1px;
-  content: "";
-  transform: scaleX(0);
-  transform-origin: left;
-  background: linear-gradient(90deg, var(--gold-deep), var(--gold), rgba(197, 163, 106, 0.2));
+  height: 12px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.header-seam-band {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: var(--gold-deep);
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  -webkit-mask-position: left center;
+  mask-position: left center;
+}
+
+/* Без поддержки скролл-таймлайнов остаётся статичный смешанный шов */
+.header-seam-band--mixed {
+  opacity: 0.62;
+}
+
+.header-seam-band--es {
+  -webkit-mask-size: 36px 12px;
+  mask-size: 36px 12px;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 16' width='48' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.4'%3E%3Cpath d='M0 8L12 2L24 8L36 2L48 8'/%3E%3Cpath d='M0 8L12 14L24 8L36 14L48 8'/%3E%3C/g%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 16' width='48' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.4'%3E%3Cpath d='M0 8L12 2L24 8L36 2L48 8'/%3E%3Cpath d='M0 8L12 14L24 8L36 14L48 8'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.header-seam-band--mixed {
+  -webkit-mask-size: 72px 12px;
+  mask-size: 72px 12px;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 16' width='96' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.4'%3E%3Cpath d='M0 8L12 2L24 8L36 2L48 8'/%3E%3Cpath d='M0 8L12 14L24 8L36 14L48 8'/%3E%3Cpath d='M48 8H62M82 8H96'/%3E%3Cpath d='M72 2L82 8L72 14L62 8Z'/%3E%3C/g%3E%3Ccircle cx='72' cy='8' r='1.8' fill='%23000'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 16' width='96' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.4'%3E%3Cpath d='M0 8L12 2L24 8L36 2L48 8'/%3E%3Cpath d='M0 8L12 14L24 8L36 14L48 8'/%3E%3Cpath d='M48 8H62M82 8H96'/%3E%3Cpath d='M72 2L82 8L72 14L62 8Z'/%3E%3C/g%3E%3Ccircle cx='72' cy='8' r='1.8' fill='%23000'/%3E%3C/svg%3E");
+}
+
+.header-seam-band--ru {
+  -webkit-mask-size: 36px 12px;
+  mask-size: 36px 12px;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 16' width='48' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.4'%3E%3Cpath d='M0 8H14M34 8H48'/%3E%3Cpath d='M24 2L34 8L24 14L14 8Z'/%3E%3Cpath d='M5 4.5V11.5M43 4.5V11.5'/%3E%3C/g%3E%3Ccircle cx='24' cy='8' r='1.8' fill='%23000'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 16' width='48' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.4'%3E%3Cpath d='M0 8H14M34 8H48'/%3E%3Cpath d='M24 2L34 8L24 14L14 8Z'/%3E%3Cpath d='M5 4.5V11.5M43 4.5V11.5'/%3E%3C/g%3E%3Ccircle cx='24' cy='8' r='1.8' fill='%23000'/%3E%3C/svg%3E");
 }
 
 .site-header.is-scrolled,
@@ -330,16 +580,60 @@ summary {
   color: var(--gold);
 }
 
-@supports (animation-timeline: scroll()) {
-  .site-header::after {
-    animation: page-progress linear both;
-    animation-timeline: scroll(root block);
+@keyframes seam-progress {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
   }
 }
 
-@keyframes page-progress {
-  to {
-    transform: scaleX(1);
+/* Испанский мотив у первого экрана, русский к контактам,
+   смешанный проходит серединой.
+
+   Переходы встык: там, где один мотив гаснет, второй ровно так же
+   разгорается, поэтому сумма непрозрачности всегда остаётся 0.62 и
+   шов не вспыхивает ярче на стыках. */
+@keyframes seam-band-es {
+  0%,
+  20% {
+    opacity: 0.62;
+  }
+
+  34%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes seam-band-mixed {
+  0%,
+  20% {
+    opacity: 0;
+  }
+
+  34%,
+  60% {
+    opacity: 0.62;
+  }
+
+  74%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes seam-band-ru {
+  0%,
+  60% {
+    opacity: 0;
+  }
+
+  74%,
+  100% {
+    opacity: 0.62;
   }
 }
 
@@ -627,32 +921,6 @@ summary {
   background: linear-gradient(transparent, rgba(10, 12, 11, 0.75));
 }
 
-.ornament-rule {
-  position: relative;
-  width: min(460px, 100%);
-  height: 32px;
-  margin-top: 54px;
-  opacity: 0.58;
-  background:
-    linear-gradient(90deg, transparent, var(--line-gold) 12%, var(--line-gold) 88%, transparent) center / 100% 1px no-repeat,
-    radial-gradient(ellipse at 50% 100%, transparent 0 46%, var(--gold-deep) 48% 51%, transparent 53%) 0 2px / 46px 15px repeat-x,
-    radial-gradient(ellipse at 50% 0%, transparent 0 46%, var(--gold-deep) 48% 51%, transparent 53%) 23px 15px / 46px 15px repeat-x;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-}
-
-.ornament-rule::after {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 9px;
-  height: 9px;
-  border: 1px solid var(--gold);
-  content: "";
-  transform: translate(-50%, -50%) rotate(45deg);
-  background: var(--ink-soft);
-}
-
 .philosophy-quote {
   max-width: 660px;
   margin: 48px 0 0;
@@ -673,45 +941,10 @@ summary {
   justify-items: start;
 }
 
-.horse-filters {
-  display: flex;
-  margin-top: 64px;
-  flex-wrap: wrap;
-  overflow: visible;
-  gap: 28px;
-  scrollbar-width: none;
-}
-
-.horse-filters::-webkit-scrollbar {
-  display: none;
-}
-
-.filter-button {
-  position: relative;
-  flex: 0 0 auto;
-  min-height: 44px;
-  padding: 8px 0 9px;
-  border: 0;
-  border-bottom: 1px solid transparent;
-  background: transparent;
-  color: var(--smoke);
-  font-size: 0.84rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: color 0.3s ease, border-color 0.3s ease;
-}
-
-.filter-button:hover,
-.filter-button.is-active {
-  border-color: var(--gold);
-  color: var(--gold);
-}
-
 .horse-track {
   display: grid;
   width: var(--shell);
-  margin-top: 52px;
+  margin-top: clamp(34px, 3.8vw, 56px);
   margin-inline: auto;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(16px, 1.8vw, 30px);
@@ -729,33 +962,21 @@ summary {
   cursor: pointer;
 }
 
+/* Лошадь показывается целиком, от ушей до хвоста: экстерьер и есть
+   товар, обрезать его нельзя. Исходники приходят разных пропорций,
+   поэтому кадр вписывается через contain, а свободное поле работает
+   как паспарту каталожного отпечатка, а не как чёрные поля. */
 .horse-image-wrap {
   position: relative;
   display: block;
   aspect-ratio: 4 / 5;
+  padding: clamp(10px, 1.1vw, 16px);
   overflow: hidden;
   isolation: isolate;
-  background: #0d100e;
-}
-
-.horse-image-wrap::before {
-  position: absolute;
-  inset: -22px;
-  z-index: -1;
-  content: "";
-  opacity: 0.52;
-  background: var(--card-image) center / cover no-repeat;
-  filter: blur(22px) saturate(0.68) brightness(0.58);
-  transform: scale(1.08);
-}
-
-.horse-image-wrap::after {
-  position: absolute;
-  inset: 0;
-  content: "";
-  z-index: 2;
-  background: linear-gradient(180deg, rgba(10, 12, 11, 0.05), transparent 58%, rgba(10, 12, 11, 0.34));
-  pointer-events: none;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(ellipse at 50% 44%, rgba(42, 59, 44, 0.36), transparent 72%),
+    #0c0f0d;
 }
 
 .horse-image-wrap img {
@@ -766,19 +987,29 @@ summary {
   object-fit: contain;
   object-position: center;
   filter: saturate(0.76) contrast(1.04) brightness(0.94) sepia(0.05);
-  transition: transform 0.55s var(--ease), filter 0.35s ease;
+  transition: transform 0.7s var(--ease), filter 0.35s ease;
 }
 
 .horse-card:hover .horse-image-wrap img,
 .horse-card:focus-visible .horse-image-wrap img {
-  transform: scale(1.018);
+  transform: scale(1.022);
   filter: saturate(0.9) contrast(1.04) brightness(0.99) sepia(0.03);
+}
+
+.horse-card:hover .horse-image-wrap,
+.horse-card:focus-visible .horse-image-wrap {
+  border-color: var(--line-gold);
+}
+
+.horse-card:hover .corner-frame,
+.horse-card:focus-visible .corner-frame {
+  opacity: 1;
 }
 
 .horse-card-copy {
   display: grid;
-  min-height: 126px;
-  padding-top: 18px;
+  min-height: 132px;
+  padding-top: 20px;
   grid-template-columns: 1fr;
   gap: 5px;
   align-content: start;
@@ -796,19 +1027,28 @@ summary {
   letter-spacing: 0.02em;
 }
 
+.horse-foot {
+  display: flex;
+  margin-top: 14px;
+  padding-top: 12px;
+  gap: 10px 18px;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+}
+
 .horse-status {
-  margin-top: auto;
   color: var(--gold);
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  text-align: left;
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
-.empty-state {
-  padding-block: 72px;
+.horse-price {
   color: var(--smoke);
-  border-top: 1px solid var(--line);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
 }
 
 .breeding {
@@ -839,7 +1079,7 @@ summary {
 
 .facts {
   display: grid;
-  margin: 58px 0 0;
+  margin: 40px 0 0;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 28px 36px;
 }
@@ -885,7 +1125,7 @@ summary {
 
 .breeding-media figcaption,
 .life-frame figcaption,
-.horse-story-photo figcaption {
+.season-frame figcaption {
   margin-top: 12px;
   color: rgba(232, 230, 223, 0.74);
   font-family: var(--display);
@@ -923,7 +1163,7 @@ summary {
 .life-gallery {
   display: grid;
   width: var(--shell);
-  margin-top: 72px;
+  margin-top: 48px;
   margin-inline: auto;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: clamp(18px, 2.2vw, 38px);
@@ -994,7 +1234,7 @@ summary {
 
 .contact-direct {
   display: grid;
-  margin-top: 56px;
+  margin-top: 40px;
   gap: 4px;
   color: var(--smoke);
 }
@@ -1116,56 +1356,39 @@ summary {
 .contact-bottom {
   position: relative;
   display: grid;
-  margin-top: 110px;
-  padding-top: 50px;
+  margin-top: 72px;
+  padding-top: 40px;
   grid-template-columns: 0.85fr 1.15fr;
   gap: clamp(48px, 8vw, 130px);
   border-top: 1px solid var(--line);
 }
 
-.map-placeholder {
-  position: relative;
-  display: grid;
-  min-height: 320px;
-  padding: 36px;
-  overflow: hidden;
-  align-content: end;
+/* Рисованная карта. Внешний картографический виджет сюда не ставим:
+   он тянет чужие шрифты и куки-баннер и ломает тёмную тему. */
+.farm-map {
+  margin: 0;
+}
+
+.farm-map svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 800 / 440;
   border: 1px solid var(--line);
   background:
-    radial-gradient(circle at 72% 32%, rgba(197, 163, 106, 0.18) 0 5px, transparent 6px),
-    repeating-linear-gradient(28deg, transparent 0 44px, rgba(232, 230, 223, 0.035) 45px 46px),
+    radial-gradient(ellipse at 54% 44%, rgba(42, 59, 44, 0.4), transparent 62%),
     var(--forest);
+  color: var(--gold);
 }
 
-.map-placeholder strong,
-.map-placeholder span {
-  position: relative;
-  z-index: 2;
+.farm-map .map-pin {
+  color: var(--gold);
 }
 
-.map-placeholder strong {
-  color: var(--ivory);
-  font-family: var(--display);
-  font-size: 2rem;
-  font-weight: 400;
-}
-
-.map-placeholder span {
-  max-width: 360px;
-  margin-top: 6px;
+.farm-map figcaption {
+  margin-top: 14px;
   color: var(--smoke);
   font-size: 0.86rem;
-}
-
-.map-river {
-  position: absolute;
-  top: -15%;
-  right: 17%;
-  width: 27%;
-  height: 130%;
-  border: 1px solid rgba(197, 163, 106, 0.25);
-  transform: rotate(13deg) skewX(-12deg);
-  background: rgba(197, 163, 106, 0.05);
 }
 
 .faq details {
@@ -1210,33 +1433,120 @@ summary {
 }
 
 .site-footer {
-  padding-block: 44px;
-  border-top: 1px solid var(--line);
+  position: relative;
+  padding-bottom: 34px;
   background: #080a09;
 }
 
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1.3fr auto;
-  gap: 28px;
-  align-items: center;
-  color: var(--smoke);
-  font-size: 0.8rem;
+.site-footer .frieze {
+  margin-bottom: clamp(34px, 4vw, 58px);
 }
 
-.footer-grid p {
-  margin: 0;
+.footer-main {
+  display: grid;
+  grid-template-columns: 1.5fr 0.9fr 1fr;
+  gap: clamp(40px, 6vw, 110px);
+  align-items: start;
+  color: var(--smoke);
+  font-size: 0.86rem;
+}
+
+.brand--footer .brand-mark {
+  width: 56px;
+  height: 66px;
+  font-size: 1.5rem;
+}
+
+.brand--footer .brand-wordmark {
+  font-size: 1.6rem;
+}
+
+.footer-line {
+  max-width: 420px;
+  margin: 26px 0 0;
+  color: var(--ivory-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 .legal-placeholder {
   max-width: 460px;
+  margin: 14px 0 0;
+  font-size: 0.8rem;
+}
+
+.footer-heading {
+  margin: 0 0 20px;
+  color: var(--gold);
+  font-family: var(--display);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.footer-nav {
+  display: grid;
+  margin-top: -10px;
+  justify-items: start;
+}
+
+.footer-nav a {
+  display: inline-flex;
+  min-height: 44px;
+  padding-block: 10px;
+  align-items: center;
+  color: var(--ivory-muted);
+  border-bottom: 1px solid transparent;
+  transition: color 0.22s ease, border-color 0.22s ease;
+}
+
+.footer-nav a:hover {
+  border-color: var(--line-gold);
+  color: var(--gold);
+}
+
+.footer-contact {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+}
+
+.footer-phone {
+  margin-bottom: 4px;
+  color: var(--ivory);
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 2.1vw, 2.2rem);
+  line-height: 1;
+}
+
+.footer-social {
+  display: flex;
+  margin-top: 20px;
+  gap: 10px 18px;
+  flex-wrap: wrap;
+}
+
+.footer-social a {
+  display: inline-flex;
+  min-height: 44px;
+  padding-bottom: 5px;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--line-gold);
+  color: var(--gold);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .footer-meta {
   display: flex;
+  margin-top: clamp(34px, 4vw, 58px);
+  padding-top: 24px;
   align-items: center;
-  justify-content: flex-end;
   gap: 9px;
+  border-top: 1px solid var(--line);
+  color: var(--smoke);
+  font-size: 0.8rem;
   white-space: nowrap;
 }
 
@@ -1323,12 +1633,14 @@ summary {
     #0b0e0c;
 }
 
+/* В досье лошадь тем более должна быть видна целиком */
 .dialog-image-wrap img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center 45%;
+  padding: clamp(16px, 2vw, 34px);
+  object-fit: contain;
+  object-position: center;
   filter: saturate(0.78) contrast(1.04) brightness(0.95) sepia(0.04);
 }
 
@@ -1388,10 +1700,13 @@ summary {
   }
 }
 
+/* Недостающий кадр отрисовывается орнаментальной плашкой из системы Шва,
+   а не сообщением об ошибке: пустое место должно читаться как графика. */
 .image-error {
   position: relative;
+  overflow: hidden;
   background:
-    radial-gradient(circle at 50% 40%, rgba(197, 163, 106, 0.1), transparent 24%),
+    radial-gradient(ellipse at 50% 42%, rgba(42, 59, 44, 0.55), transparent 66%),
     var(--forest);
 }
 
@@ -1401,170 +1716,540 @@ summary {
 
 .image-error::before {
   position: absolute;
-  inset: 0;
+  top: 50%;
+  left: 50%;
   z-index: 2;
-  display: grid;
-  padding: 24px;
-  place-items: center;
-  content: "Изображение временно недоступно";
+  width: min(56%, 260px);
+  aspect-ratio: 1;
+  content: "";
+  transform: translate(-50%, -54%);
+  background: var(--gold);
+  opacity: 0.14;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.6'%3E%3Ccircle cx='100' cy='100' r='97'/%3E%3Ccircle cx='100' cy='100' r='70'/%3E%3Ccircle cx='100' cy='100' r='38'/%3E%3Cpath d='M100 30L170 100L100 170L30 100Z'/%3E%3Cpath d='M50 50H150V150H50Z'/%3E%3Cpath d='M100 82L118 100L100 118L82 100Z'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.6'%3E%3Ccircle cx='100' cy='100' r='97'/%3E%3Ccircle cx='100' cy='100' r='70'/%3E%3Ccircle cx='100' cy='100' r='38'/%3E%3Cpath d='M100 30L170 100L100 170L30 100Z'/%3E%3Cpath d='M50 50H150V150H50Z'/%3E%3Cpath d='M100 82L118 100L100 118L82 100Z'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.image-error::after {
+  position: absolute;
+  right: 0;
+  bottom: 12%;
+  left: 0;
+  z-index: 3;
+  content: "Кадр готовится";
   color: var(--smoke);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
   text-align: center;
   text-transform: uppercase;
+  opacity: 0.7;
 }
 
-.back-link {
-  grid-column: 3;
-  justify-self: end;
-  display: inline-flex;
-  gap: 12px;
-  color: var(--ivory-muted);
-  font-size: 0.72rem;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-}
+/* ============================================================
+   ДВЕ ЗЕМЛИ - диптих
+   Левая створка греется, правая холодеет. Между ними
+   вертикальный шов: та самая точка, где встречаются
+   андалузская порода и тульская земля.
+   ============================================================ */
 
-.horse-hero {
-  position: relative;
-  min-height: 100dvh;
+.orn-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
   overflow: hidden;
 }
 
-.horse-hero-media,
-.horse-hero-shade {
+.two-lands {
+  background: linear-gradient(180deg, var(--ink) 0%, #0d110e 14%, #0d110e 86%, var(--ink) 100%);
+}
+
+.diptych {
+  display: grid;
+  width: var(--shell);
+  margin: clamp(36px, 4vw, 60px) auto 0;
+  grid-template-columns: 1fr 16px 1fr;
+  gap: clamp(24px, 3vw, 56px);
+  align-items: stretch;
+}
+
+.diptych-panel {
+  display: grid;
+  margin: 0;
+  align-content: start;
+}
+
+.diptych-panel img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+  transition: transform 0.8s var(--ease);
+}
+
+/* Съёмка уже приходит разведённой по температуре: испанская створка
+   тёплая, русская почти монохромная. Поэтому фильтр здесь только
+   подравнивает кадры под общий грейд и не красит их второй раз. */
+.diptych-panel--es img {
+  filter: saturate(0.9) contrast(1.04) brightness(0.98) sepia(0.05);
+}
+
+.diptych-panel--ru img {
+  filter: saturate(0.85) contrast(1.05) brightness(0.97);
+}
+
+.diptych-panel figcaption {
+  display: grid;
+  margin-top: clamp(22px, 2.4vw, 34px);
+  gap: 12px;
+}
+
+.diptych-place {
+  color: var(--gold);
+  font-family: var(--display);
+  font-size: 1.35rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.diptych-text {
+  max-width: 470px;
+  color: var(--ivory-muted);
+  font-size: 1rem;
+  line-height: 1.68;
+}
+
+.two-lands-close {
+  max-width: 700px;
+  margin-top: clamp(34px, 3.6vw, 56px);
+  color: var(--ivory);
+  font-family: var(--display);
+  font-size: clamp(1.3rem, 2.1vw, 2rem);
+  font-style: italic;
+  line-height: 1.3;
+  text-align: center;
+}
+
+/* ============================================================
+   КИНЕМАТОГРАФИЧЕСКИЙ РАЗРЫВ
+   Ломает чередование сплит/сетка. Никакого интерфейса,
+   только земля и одна фраза.
+   ============================================================ */
+
+.break {
+  position: relative;
+  display: grid;
+  min-height: min(62vh, 580px);
+  overflow: hidden;
+  align-content: center;
+}
+
+.break-media {
   position: absolute;
   inset: 0;
 }
 
-.horse-hero-media img {
+.break-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 52% center;
-  filter: saturate(0.72) contrast(1.04) brightness(0.72);
+  object-position: center 42%;
+  filter: saturate(0.66) contrast(1.06) brightness(0.72) sepia(0.06);
 }
 
-.horse-hero-shade {
+.break-shade {
+  position: absolute;
+  inset: 0;
   background:
-    linear-gradient(90deg, rgba(10, 12, 11, 0.96), rgba(10, 12, 11, 0.48) 52%, rgba(10, 12, 11, 0.18)),
-    linear-gradient(180deg, rgba(10, 12, 11, 0.45), transparent 32%, var(--ink) 100%);
+    radial-gradient(ellipse at 50% 52%, rgba(6, 8, 7, 0.62), transparent 68%),
+    linear-gradient(180deg, var(--ink) 0%, transparent 24%, transparent 74%, var(--ink) 100%);
 }
 
-.horse-hero-copy {
+.break-copy {
   position: relative;
   z-index: 2;
-  display: grid;
-  min-height: 100dvh;
-  padding-top: calc(var(--header-height) + 18px);
-  padding-bottom: 80px;
-  align-content: center;
+  padding-block: clamp(52px, 6vw, 86px);
+  text-align: center;
 }
 
-.horse-detail-title {
-  max-width: 1000px;
-  margin: 0;
+.break-quote {
+  max-width: 900px;
+  margin: 0 auto;
+  color: var(--ivory);
   font-family: var(--display);
-  font-size: clamp(5rem, 11vw, 13rem);
-  font-weight: 400;
-  letter-spacing: -0.06em;
-  line-height: 0.78;
+  font-size: clamp(1.9rem, 4.2vw, 4.2rem);
+  font-style: italic;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  text-wrap: balance;
 }
 
-.horse-detail-title span {
-  display: block;
-  padding-left: 18vw;
+.break-attr {
+  margin: clamp(24px, 3vw, 40px) 0 0;
   color: var(--gold);
-  font-size: 0.56em;
-  letter-spacing: 0.02em;
-  line-height: 1.3;
-}
-
-.horse-detail-lead {
-  max-width: 630px;
-  margin: 50px 0 0;
-  color: var(--ivory-muted);
-  font-size: clamp(1.1rem, 1.8vw, 1.6rem);
-}
-
-.horse-specs {
-  background: var(--ink);
-}
-
-.horse-spec-grid {
-  display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  gap: clamp(60px, 9vw, 160px);
-  align-items: start;
-}
-
-.spec-cards {
-  display: grid;
-  margin: 0;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-}
-
-.spec-cards div {
-  min-height: 170px;
-  padding: 26px;
-  border: 1px solid var(--line);
-  background: rgba(23, 32, 25, 0.44);
-}
-
-.spec-cards dt {
-  color: var(--smoke);
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
 }
 
-.spec-cards dd {
-  margin: 44px 0 0;
+/* ============================================================
+   ЦИТАТА С РОЗЕТКОЙ
+   ============================================================ */
+
+.quote-block {
+  position: relative;
+  margin-top: clamp(28px, 3.2vw, 44px);
+}
+
+.plate--quote {
+  top: 50%;
+  left: -10%;
+  transform: translateY(-50%);
+}
+
+.quote-block .seam,
+.quote-block blockquote {
+  position: relative;
+  z-index: 1;
+}
+
+.quote-block .philosophy-quote {
+  margin-top: 40px;
+}
+
+/* ============================================================
+   ЛИНИЯ - типографическая родословная
+   ============================================================ */
+
+.lineage {
+  margin-top: clamp(32px, 3.4vw, 50px);
+  padding-top: 26px;
+  border-top: 1px solid var(--line);
+}
+
+.lineage-title {
+  margin: 0 0 26px;
+  color: var(--gold);
+  font-family: var(--display);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.lineage-track {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lineage-node {
+  position: relative;
+  padding: 0 0 28px 36px;
+}
+
+.lineage-node:last-child {
+  padding-bottom: 0;
+}
+
+.lineage-node::before {
+  position: absolute;
+  top: 18px;
+  bottom: -2px;
+  left: 5px;
+  width: 1px;
+  content: "";
+  background: linear-gradient(var(--line-gold), rgba(197, 163, 106, 0.08));
+}
+
+.lineage-node:last-child::before {
+  display: none;
+}
+
+.lineage-mark {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  width: 11px;
+  height: 11px;
+  border: 1px solid var(--gold);
+  transform: rotate(45deg);
+}
+
+.lineage-name {
+  display: block;
   color: var(--ivory);
   font-family: var(--display);
-  font-size: clamp(1.7rem, 2.4vw, 2.8rem);
+  font-size: clamp(1.3rem, 1.8vw, 1.85rem);
+  line-height: 1.1;
+}
+
+.lineage-note {
+  display: block;
+  margin-top: 5px;
+  color: var(--smoke);
+  font-size: 0.86rem;
+}
+
+/* ============================================================
+   ГОД НА ФЕРМЕ - сезонная лента
+   ============================================================ */
+
+.seasons {
+  margin-top: clamp(56px, 6vw, 96px);
+}
+
+.seasons-head .seam {
+  margin-bottom: clamp(30px, 3.4vw, 46px);
+}
+
+.seasons-title {
+  margin: 0;
+  color: var(--ivory);
+  font-family: var(--display);
+  font-size: clamp(2.1rem, 3.6vw, 3.9rem);
+  font-weight: 500;
+  letter-spacing: -0.025em;
   line-height: 1;
 }
 
-.horse-story {
-  background: var(--ink-soft);
+.seasons-lead {
+  max-width: 560px;
+  margin: 20px 0 0;
+  color: var(--ivory-muted);
+  font-size: 1.05rem;
+  line-height: 1.6;
 }
 
-.horse-story-grid {
+.seasons-track {
   display: grid;
-  grid-template-columns: minmax(480px, 1.1fr) minmax(380px, 0.9fr);
-  gap: clamp(60px, 9vw, 150px);
-  align-items: center;
+  width: var(--shell);
+  margin: clamp(28px, 3.2vw, 46px) auto 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(14px, 1.7vw, 28px);
 }
 
-.horse-story-photo {
+.season-frame {
   margin: 0;
 }
 
-.horse-story-photo img {
+.season-frame:nth-child(even) {
+  padding-top: clamp(26px, 4vw, 68px);
+}
+
+/* Сезоны сами несут температурную дугу от тёплой весны к холодной зиме.
+   Общий sepia её бы сплющил и подкрасил снег, поэтому его здесь нет. */
+.season-frame img {
   width: 100%;
-  min-height: 650px;
+  height: auto;
+  aspect-ratio: 3 / 4;
   object-fit: cover;
-  filter: saturate(0.68) brightness(0.84);
+  filter: saturate(0.9) contrast(1.03) brightness(0.97);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+  transition: transform 0.7s var(--ease), filter 0.4s ease;
 }
 
-.horse-contact {
-  background:
-    linear-gradient(rgba(10, 12, 11, 0.84), rgba(10, 12, 11, 0.92)),
-    url("assets/farm-herd.jpg") center / cover;
+.season-frame:hover img {
+  transform: scale(1.015);
+  filter: saturate(1) contrast(1.03) brightness(1.03);
 }
 
-.horse-contact-grid {
+.season-label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--gold);
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   КАК КУПИТЬ
+   ============================================================ */
+
+.buying {
+  background: linear-gradient(180deg, var(--ink) 0%, var(--ink-soft) 16%, var(--ink-soft) 84%, var(--ink) 100%);
+}
+
+.steps {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 60px;
-  align-items: end;
+  margin-top: clamp(36px, 4vw, 60px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(26px, 3vw, 54px);
 }
 
-.horse-contact-actions {
+.step {
+  position: relative;
+  padding-top: 30px;
+  border-top: 1px solid var(--line);
+}
+
+.step::before {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--gold);
+  content: "";
+  transform: rotate(45deg);
+  background: var(--ink-soft);
+}
+
+.step-num {
+  display: block;
+  margin-bottom: 20px;
+  color: var(--gold);
+  font-family: var(--display);
+  font-size: 1.45rem;
+  letter-spacing: 0.18em;
+  line-height: 1;
+}
+
+.step h3 {
+  margin: 0 0 14px;
+  color: var(--ivory);
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 2vw, 2.1rem);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.step p {
+  margin: 0;
+  color: var(--ivory-muted);
+  font-size: 0.98rem;
+  line-height: 1.66;
+}
+
+.included {
   display: grid;
-  gap: 14px;
+  margin-top: clamp(46px, 5vw, 78px);
+  padding-top: clamp(30px, 3.4vw, 48px);
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: clamp(40px, 6vw, 110px);
+  border-top: 1px solid var(--line);
+}
+
+.included-head {
+  display: grid;
+  gap: 26px;
+  align-content: start;
+  justify-items: start;
+}
+
+.included-mark {
+  display: block;
+  width: 38px;
+  color: var(--gold);
+  opacity: 0.82;
+}
+
+.included-mark svg {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 40 / 46;
+}
+
+.included-head h3 {
+  max-width: 340px;
+  margin: 0;
+  color: var(--ivory);
+  font-family: var(--display);
+  font-size: clamp(1.8rem, 2.7vw, 2.9rem);
+  font-weight: 500;
+  line-height: 1.05;
+}
+
+.included-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 clamp(24px, 3vw, 56px);
+  list-style: none;
+}
+
+.included-list li {
+  position: relative;
+  padding: 18px 0 18px 26px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ivory-muted);
+  font-size: 0.96rem;
+}
+
+.included-list li::before {
+  position: absolute;
+  top: 25px;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--gold-deep);
+  content: "";
+  transform: rotate(45deg);
+}
+
+/* ============================================================
+   ФОРМА И ДОСЬЕ
+   ============================================================ */
+
+.visit-form {
+  position: relative;
+}
+
+.form-corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--gold);
+  opacity: 0.6;
+}
+
+.form-corner--tl {
+  top: -1px;
+  left: -1px;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.form-corner--br {
+  right: -1px;
+  bottom: -1px;
+  border-top: 0;
+  border-left: 0;
+}
+
+.horse-dialog .seam--short {
+  margin-top: clamp(28px, 3vw, 40px);
+}
+
+.dialog-specs {
+  display: grid;
+  margin: clamp(26px, 3vw, 38px) 0 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px clamp(24px, 3vw, 44px);
+}
+
+.dialog-specs > div {
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.dialog-specs dt {
+  color: var(--smoke);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.dialog-specs dd {
+  margin: 8px 0 0;
+  color: var(--ivory);
+  font-family: var(--display);
+  font-size: clamp(1.15rem, 1.5vw, 1.45rem);
+  line-height: 1.15;
 }
 
 @keyframes hero-curtain-reveal {
@@ -1586,6 +2271,37 @@ summary {
 @keyframes hero-scroll-depth {
   to {
     transform: translateY(4vh) scale(1.025);
+  }
+}
+
+/* Дрейф кадров при скролле.
+
+   Сидит на независимом свойстве translate, а не на transform: transform
+   занят ховером фотографий, и анимация всегда перебивает transition для
+   одного и того же свойства. translate и transform композируются. */
+
+/* Для кадров в клиппящей обёртке: сдвиг обнажил бы фон, поэтому им
+   дополнительно задан базовый scale, перекрывающий амплитуду. */
+@keyframes media-drift-clipped {
+  from {
+    translate: 0 3.5%;
+  }
+
+  to {
+    translate: 0 -3.5%;
+  }
+}
+
+/* Для кадров, у которых верх и низ уже растворены маской: там сдвиг
+   просто смещает растворённую полосу, жёсткого края не возникает,
+   и масштаб не нужен. */
+@keyframes media-drift-masked {
+  from {
+    translate: 0 2.5%;
+  }
+
+  to {
+    translate: 0 -2.5%;
   }
 }
 
@@ -1611,14 +2327,61 @@ summary {
     transition: opacity 0.58s var(--ease), transform 0.58s var(--ease);
   }
 
+  /* Кадр выезжает шторкой снизу вверх.
+     Здесь намеренно нет transform: он занят ховером на фотографиях,
+     а анимация всегда перебивает transition для одного свойства.
+     Дрейф по скроллу по той же причине сидит на translate/scale. */
   .reveal-media {
+    opacity: 0;
+    clip-path: inset(0 0 16% 0);
+    transition: clip-path 1.2s var(--ease), opacity 0.9s var(--ease);
+  }
+
+  .reveal-media.is-visible {
     opacity: 1;
-    transform: none;
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* Ряды из четырёх кадров иначе вспыхивают одним блоком */
+  .life-gallery .reveal-media:nth-child(2),
+  .seasons-track .reveal-media:nth-child(2),
+  .horse-track .reveal:nth-child(2) {
+    transition-delay: 0.1s;
+  }
+
+  .life-gallery .reveal-media:nth-child(3),
+  .seasons-track .reveal-media:nth-child(3),
+  .horse-track .reveal:nth-child(3) {
+    transition-delay: 0.2s;
+  }
+
+  .life-gallery .reveal-media:nth-child(4),
+  .seasons-track .reveal-media:nth-child(4),
+  .horse-track .reveal:nth-child(4) {
+    transition-delay: 0.3s;
   }
 
   .reveal.is-visible {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* Шов прорисовывается от центра к краям. Начальное состояние
+     живёт здесь, а не в базовом правиле: если JS не отработает,
+     орнамент останется видимым, а не исчезнет. */
+  .seam::before {
+    clip-path: inset(0 50% 0 50%);
+    transition: clip-path 1.15s var(--ease);
+  }
+
+  .seam-v::before {
+    clip-path: inset(50% 0 50% 0);
+    transition: clip-path 1.3s var(--ease);
+  }
+
+  .seam.is-visible::before,
+  .seam-v.is-visible::before {
+    clip-path: inset(0 0 0 0);
   }
 
   .hero .reveal:nth-child(2) {
@@ -1644,6 +2407,45 @@ summary {
       animation: hero-copy-drift linear both;
       animation-timeline: scroll(root block);
       animation-range: 0 100vh;
+    }
+
+    .header-seam {
+      animation: seam-progress linear both;
+      animation-timeline: scroll(root block);
+    }
+
+    .header-seam-band--es {
+      animation: seam-band-es linear both;
+      animation-timeline: scroll(root block);
+    }
+
+    .header-seam-band--mixed {
+      animation: seam-band-mixed linear both;
+      animation-timeline: scroll(root block);
+    }
+
+    .header-seam-band--ru {
+      animation: seam-band-ru linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+
+  /* Тот же вес, что у первого экрана, но на всей странице.
+     Карточки лошадей сюда не входят: там object-fit: contain на
+     паспарту, и сдвиг внутри рамки читался бы как брак. */
+  @supports (animation-timeline: view()) {
+    .philosophy-media img,
+    .break-media img {
+      scale: 1.09;
+      animation: media-drift-clipped linear both;
+      animation-timeline: view();
+    }
+
+    .diptych-panel img,
+    .life-frame img,
+    .season-frame img {
+      animation: media-drift-masked linear both;
+      animation-timeline: view();
     }
   }
 }
@@ -1676,8 +2478,13 @@ summary {
     gap: 60px;
   }
 
-  .footer-grid {
-    grid-template-columns: 1fr 1fr;
+  .steps {
+    gap: 24px 26px;
+  }
+
+  .included {
+    grid-template-columns: 1fr;
+    gap: 44px;
   }
 }
 
@@ -1695,8 +2502,7 @@ summary {
     display: none;
   }
 
-  .header-actions,
-  .back-link {
+  .header-actions {
     grid-column: 2;
   }
 
@@ -1705,7 +2511,7 @@ summary {
   }
 
   .section {
-    padding-block: 100px;
+    padding-block: 62px;
   }
 
   .hero-media {
@@ -1730,15 +2536,67 @@ summary {
   .philosophy-grid,
   .breeding-grid,
   .contact-grid,
-  .contact-bottom,
-  .horse-spec-grid,
-  .horse-story-grid,
-  .horse-contact-grid {
+  .contact-bottom {
     grid-template-columns: 1fr;
   }
 
   .philosophy-grid {
     gap: 70px;
+  }
+
+  /* Диптих раскладывается в две створки со швом между ними */
+  .diptych {
+    grid-template-columns: 1fr;
+    gap: clamp(28px, 4vw, 48px);
+  }
+
+  .diptych .seam-v {
+    width: 100%;
+    height: 16px;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+  }
+
+  .diptych .seam-v::before {
+    -webkit-mask-repeat: repeat-x;
+    mask-repeat: repeat-x;
+    -webkit-mask-size: 96px 16px;
+    mask-size: 96px 16px;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 8L12 2L24 8L36 2L48 8'/%3E%3Cpath d='M0 8L12 14L24 8L36 14L48 8'/%3E%3Cpath d='M48 8H62M82 8H96'/%3E%3Cpath d='M72 2L82 8L72 14L62 8Z'/%3E%3C/g%3E%3Ccircle cx='72' cy='8' r='1.5' fill='%23000'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 8L12 2L24 8L36 2L48 8'/%3E%3Cpath d='M0 8L12 14L24 8L36 14L48 8'/%3E%3Cpath d='M48 8H62M82 8H96'/%3E%3Cpath d='M72 2L82 8L72 14L62 8Z'/%3E%3C/g%3E%3Ccircle cx='72' cy='8' r='1.5' fill='%23000'/%3E%3C/svg%3E");
+  }
+
+  /* Исходники вертикальные, поэтому в одну колонку берём умеренный
+     кроп: 16/10 срезал бы половину кадра. */
+  .diptych-panel img {
+    aspect-ratio: 4 / 3;
+  }
+
+  .diptych-text {
+    max-width: 620px;
+  }
+
+  .steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px 30px;
+  }
+
+  .seasons-track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .season-frame:nth-child(even) {
+    padding-top: 0;
+  }
+
+  .footer-main {
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
   }
 
   .philosophy-media {
@@ -1748,6 +2606,13 @@ summary {
 
   .philosophy-media img {
     min-height: 650px;
+  }
+
+  /* В одну колонку розетка больше не помещается слева от текста */
+  .plate--quote {
+    left: 50%;
+    width: min(74vw, 460px);
+    transform: translate(-50%, -50%);
   }
 
   .breeding-grid {
@@ -1770,23 +2635,6 @@ summary {
   .contact-bottom {
     gap: 60px;
   }
-
-  .horse-spec-grid,
-  .horse-story-grid {
-    gap: 70px;
-  }
-
-  .horse-story-photo {
-    width: 78vw;
-  }
-
-  .horse-contact-grid {
-    align-items: start;
-  }
-
-  .horse-contact-actions {
-    width: fit-content;
-  }
 }
 
 @media (max-width: 767px) {
@@ -1807,7 +2655,7 @@ summary {
   }
 
   .section {
-    padding-block: 76px;
+    padding-block: 50px;
   }
 
   .section-title {
@@ -1817,6 +2665,22 @@ summary {
 
   .brand-wordmark {
     display: none;
+  }
+
+  /* Шапка здесь 68px, шов в полную высоту перегружает её */
+  .header-seam {
+    height: 8px;
+  }
+
+  .header-seam-band--es,
+  .header-seam-band--ru {
+    -webkit-mask-size: 24px 8px;
+    mask-size: 24px 8px;
+  }
+
+  .header-seam-band--mixed {
+    -webkit-mask-size: 48px 8px;
+    mask-size: 48px 8px;
   }
 
   .brand-mark {
@@ -1877,28 +2741,35 @@ summary {
     object-position: 62% center;
   }
 
+  .two-lands-head,
+  .two-lands-close,
+  .steps,
+  .included,
+  .seasons-head,
+  .break-copy,
+  .footer-main,
+  .footer-meta {
+    width: 100%;
+    padding-inline: 18px;
+  }
+
   .philosophy-grid,
   .breeding-grid,
   .contact-grid,
-  .contact-bottom,
-  .horse-spec-grid,
-  .horse-story-grid,
-  .horse-contact-grid {
+  .contact-bottom {
     width: 100%;
     padding-inline: 18px;
     gap: 48px;
   }
 
   .philosophy-media,
-  .breeding-media,
-  .horse-story-photo {
+  .breeding-media {
     width: 100%;
     min-height: 0;
     margin: 0;
   }
 
-  .philosophy-media img,
-  .horse-story-photo img {
+  .philosophy-media img {
     min-height: 0;
     height: auto;
     aspect-ratio: 4 / 5;
@@ -1914,43 +2785,55 @@ summary {
     font-size: 1.65rem;
   }
 
-  .horse-filters {
-    display: grid;
-    width: calc(100vw - 36px);
-    margin-top: 42px;
-    padding-inline: 18px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px 16px;
-  }
-
-  .filter-button {
-    width: fit-content;
-    min-height: 44px;
-    padding-block: 10px;
-    text-align: left;
-  }
-
   .horse-track,
-  .life-gallery {
+  .life-gallery,
+  .seasons-track {
     width: calc(100vw - 36px);
     padding-inline: 0;
     grid-template-columns: 1fr;
   }
 
-  .horse-card,
-  .horse-card-wide {
-    flex-basis: 82vw;
+  .horse-card {
     margin-top: 0;
   }
 
   .horse-card-copy {
+    min-height: 0;
     grid-template-columns: 1fr;
   }
 
-  .horse-status {
-    grid-column: 1;
-    grid-row: auto;
-    text-align: left;
+  .diptych {
+    width: calc(100vw - 36px);
+  }
+
+  .diptych-panel img {
+    aspect-ratio: 4 / 5;
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+    gap: 34px;
+  }
+
+  .included-list {
+    grid-template-columns: 1fr;
+  }
+
+  .break {
+    min-height: 68vh;
+  }
+
+  .seasons {
+    margin-top: 52px;
+  }
+
+  .season-frame img {
+    aspect-ratio: 4 / 5;
+  }
+
+  .footer-main {
+    grid-template-columns: 1fr;
+    gap: 44px;
   }
 
   .facts {
@@ -1981,23 +2864,12 @@ summary {
   }
 
   .contact-bottom {
-    margin-top: 70px;
-    padding-top: 36px;
-  }
-
-  .map-placeholder {
-    min-height: 270px;
-    padding: 24px;
-  }
-
-  .footer-grid {
-    width: 100%;
-    padding-inline: 18px;
-    grid-template-columns: 1fr;
-    gap: 18px;
+    margin-top: 48px;
+    padding-top: 30px;
   }
 
   .footer-meta {
+    margin-top: 48px;
     align-items: flex-start;
     justify-content: flex-start;
     flex-direction: column;
@@ -2043,45 +2915,9 @@ summary {
     font-size: 3.8rem;
   }
 
-  .horse-hero-copy {
-    padding-inline: 18px;
-    align-content: end;
-  }
-
-  .horse-hero-media img {
-    object-position: 58% center;
-  }
-
-  .horse-detail-title {
-    font-size: clamp(4.3rem, 22vw, 7rem);
-  }
-
-  .horse-detail-title span {
-    padding-left: 18vw;
-  }
-
-  .horse-detail-lead {
-    margin-top: 32px;
-  }
-
-  .spec-cards {
+  .dialog-specs {
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .spec-cards div {
-    min-height: 145px;
-    padding: 18px;
-  }
-
-  .spec-cards dd {
-    margin-top: 32px;
-    font-size: 1.5rem;
-  }
-
-  .horse-contact-actions,
-  .horse-contact-actions .button {
-    width: 100%;
+    gap: 16px 20px;
   }
 }
 
@@ -2100,13 +2936,8 @@ summary {
   }
 
   .facts,
-  .spec-cards {
+  .dialog-specs {
     grid-template-columns: 1fr;
-  }
-
-  .horse-card,
-  .horse-card-wide {
-    flex-basis: 86vw;
   }
 }
 
@@ -2129,10 +2960,33 @@ summary {
     opacity: 1 !important;
     transform: none !important;
     clip-path: none !important;
+    transition-delay: 0s !important;
+  }
+
+  /* Дрейф выключен: свойства независимые, transform их не покрывает */
+  .philosophy-media img,
+  .break-media img,
+  .diptych-panel img,
+  .life-frame img,
+  .season-frame img {
+    translate: none !important;
+    scale: none !important;
   }
 
   .hero::before {
     display: none;
+  }
+}
+
+/* На мобильном вертикальный шов диптиха ложится горизонтально,
+   поэтому и прорисовываться должен вдоль другой оси. */
+@media (prefers-reduced-motion: no-preference) and (max-width: 900px) {
+  .diptych .seam-v::before {
+    clip-path: inset(0 50% 0 50%);
+  }
+
+  .diptych .seam-v.is-visible::before {
+    clip-path: inset(0 0 0 0);
   }
 }
 

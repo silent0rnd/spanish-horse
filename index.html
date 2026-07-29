@@ -15,6 +15,23 @@
   <link rel="preload" href="assets/hero-cinematic-v2.webp" as="image" media="(min-width: 768px)">
   <link rel="preload" href="assets/hero-cinematic-mobile-v2.webp" as="image" media="(max-width: 767px)">
   <link rel="stylesheet" href="styles.css">
+  <noscript>
+    <!-- Появление раздаёт JS. Если он не отработал, контент и съёмка
+         должны остаться видимыми, а не ждать класса, который не придёт. -->
+    <style>
+      .reveal,
+      .reveal-media {
+        opacity: 1 !important;
+        transform: none !important;
+        clip-path: none !important;
+      }
+
+      .seam::before,
+      .seam-v::before {
+        clip-path: none !important;
+      }
+    </style>
+  </noscript>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -38,6 +55,77 @@
 <body class="is-loading">
   <a class="skip-link" href="#main">К содержанию</a>
 
+  <!--
+    Орнаментальный спрайт системы "Шов".
+    Инлайн, а не внешний файл: внешние ссылки <use href="file.svg#id">
+    до сих пор не работают в Safari.
+  -->
+  <svg class="orn-sprite" aria-hidden="true" focusable="false" width="0" height="0">
+    <defs>
+      <symbol id="orn-rosette" viewBox="0 0 200 200">
+        <g fill="none" stroke="currentColor" stroke-width="1">
+          <circle cx="100" cy="100" r="97"/>
+          <circle cx="100" cy="100" r="88"/>
+          <circle cx="100" cy="100" r="70"/>
+          <circle cx="100" cy="100" r="38"/>
+          <path d="M100 30L170 100L100 170L30 100Z"/>
+          <path d="M50.5 50.5H149.5V149.5H50.5Z"/>
+          <path d="M100 30Q110 46 100 62Q90 46 100 30Z"/>
+          <path d="M100 30Q110 46 100 62Q90 46 100 30Z" transform="rotate(45 100 100)"/>
+          <path d="M100 30Q110 46 100 62Q90 46 100 30Z" transform="rotate(90 100 100)"/>
+          <path d="M100 30Q110 46 100 62Q90 46 100 30Z" transform="rotate(135 100 100)"/>
+          <path d="M100 30Q110 46 100 62Q90 46 100 30Z" transform="rotate(180 100 100)"/>
+          <path d="M100 30Q110 46 100 62Q90 46 100 30Z" transform="rotate(225 100 100)"/>
+          <path d="M100 30Q110 46 100 62Q90 46 100 30Z" transform="rotate(270 100 100)"/>
+          <path d="M100 30Q110 46 100 62Q90 46 100 30Z" transform="rotate(315 100 100)"/>
+          <path d="M100 3V12" transform="rotate(22.5 100 100)"/>
+          <path d="M100 3V12" transform="rotate(67.5 100 100)"/>
+          <path d="M100 3V12" transform="rotate(112.5 100 100)"/>
+          <path d="M100 3V12" transform="rotate(157.5 100 100)"/>
+          <path d="M100 3V12" transform="rotate(202.5 100 100)"/>
+          <path d="M100 3V12" transform="rotate(247.5 100 100)"/>
+          <path d="M100 3V12" transform="rotate(292.5 100 100)"/>
+          <path d="M100 3V12" transform="rotate(337.5 100 100)"/>
+          <path d="M100 82L118 100L100 118L82 100Z"/>
+        </g>
+        <circle cx="100" cy="100" r="3.5" fill="currentColor"/>
+      </symbol>
+
+      <symbol id="orn-horseshoe" viewBox="0 0 40 46">
+        <g fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M5 43C0 25 4 4 20 4C36 4 40 25 35 43"/>
+          <path d="M13 43C10 27 13 12 20 12C27 12 30 27 27 43"/>
+          <path d="M5 43H13M35 43H27"/>
+        </g>
+        <g fill="currentColor">
+          <circle cx="8.5" cy="33" r="1.1"/>
+          <circle cx="10" cy="23" r="1.1"/>
+          <circle cx="13.5" cy="14" r="1.1"/>
+          <circle cx="26.5" cy="14" r="1.1"/>
+          <circle cx="30" cy="23" r="1.1"/>
+          <circle cx="31.5" cy="33" r="1.1"/>
+        </g>
+      </symbol>
+
+      <symbol id="orn-compass" viewBox="0 0 80 80">
+        <g fill="none" stroke="currentColor" stroke-width="1">
+          <circle cx="40" cy="40" r="37"/>
+          <circle cx="40" cy="40" r="29"/>
+          <path d="M40 3L45 35L77 40L45 45L40 77L35 45L3 40L35 35Z"/>
+          <path d="M40 14L42.5 37.5L66 40L42.5 42.5L40 66L37.5 42.5L14 40L37.5 37.5Z" transform="rotate(45 40 40)"/>
+        </g>
+        <circle cx="40" cy="40" r="2.5" fill="currentColor"/>
+      </symbol>
+
+      <pattern id="map-field" width="24" height="24" patternUnits="userSpaceOnUse" patternTransform="rotate(28)">
+        <path d="M0 0V24" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.16"/>
+      </pattern>
+      <pattern id="map-forest" width="9" height="9" patternUnits="userSpaceOnUse">
+        <path d="M4.5 2.4L6.8 6.6H2.2Z" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.42"/>
+      </pattern>
+    </defs>
+  </svg>
+
   <header class="site-header" data-header>
     <a class="brand" href="#top" aria-label="Yeguada MS, на главную">
       <span class="brand-mark" aria-hidden="true">MS</span>
@@ -45,10 +133,12 @@
     </a>
 
     <nav class="desktop-nav" aria-label="Основная навигация">
+      <a href="#two-lands">Две земли</a>
       <a href="#philosophy">О ферме</a>
       <a href="#horses">Лошади</a>
       <a href="#breeding">Разведение</a>
       <a href="#life">Жизнь фермы</a>
+      <a href="#buying">Как купить</a>
       <a href="#contacts">Контакты</a>
     </nav>
 
@@ -58,12 +148,25 @@
       </button>
     </div>
 
+    <!--
+      Полоса прогресса и есть орнаментальный шов: по мере скролла
+      мотив переходит из испанской решётки в русский ромб, показывая,
+      где вы находитесь между двумя землями.
+    -->
+    <div class="header-seam" aria-hidden="true">
+      <span class="header-seam-band header-seam-band--es"></span>
+      <span class="header-seam-band header-seam-band--mixed"></span>
+      <span class="header-seam-band header-seam-band--ru"></span>
+    </div>
+
     <div class="mobile-menu" id="mobile-menu" hidden>
       <nav aria-label="Мобильная навигация">
+        <a href="#two-lands">Две земли</a>
         <a href="#philosophy">О ферме</a>
         <a href="#horses">Лошади</a>
         <a href="#breeding">Разведение</a>
         <a href="#life">Жизнь фермы</a>
+        <a href="#buying">Как купить</a>
         <a href="#contacts">Контакты</a>
       </nav>
     </div>
@@ -95,6 +198,37 @@
       <div class="hero-transition" aria-hidden="true"></div>
     </section>
 
+    <section class="two-lands section" id="two-lands" aria-labelledby="two-lands-title">
+      <div class="seam seam--es seam--wide reveal" aria-hidden="true"></div>
+
+      <div class="page-shell two-lands-head">
+        <p class="section-number reveal"><span>I</span></p>
+        <h2 id="two-lands-title" class="section-title reveal">Андалусия дала породу.<br>Тула дала характер.</h2>
+      </div>
+
+      <div class="diptych">
+        <figure class="diptych-panel diptych-panel--es reveal-media">
+          <img src="assets/two-lands-andalusia.webp" alt="Сухая андалузская равнина с пробковыми дубами на рассвете" width="1122" height="1402" loading="lazy">
+          <figcaption>
+            <span class="diptych-place">Андалусия</span>
+            <span class="diptych-text">Порода складывалась столетиями. Картезианские монастыри Хереса вели свои линии с XV века и дали PRE её узнаваемый барочный корпус, широкий ход и кроткий нрав.</span>
+          </figcaption>
+        </figure>
+
+        <div class="seam-v reveal" aria-hidden="true"></div>
+
+        <figure class="diptych-panel diptych-panel--ru reveal-media">
+          <img src="assets/two-lands-russia.webp" alt="Берёзовая опушка и туманное поле в Тульской области" width="1122" height="1402" loading="lazy">
+          <figcaption>
+            <span class="diptych-place">Тульская область</span>
+            <span class="diptych-text">Чернозём, холмы, река и настоящая зима. Табунное содержание, длинные переходы по пастбищам и ранний контакт с человеком дают выносливость и спокойную голову.</span>
+          </figcaption>
+        </figure>
+      </div>
+
+      <p class="two-lands-close page-shell reveal">Yeguada MS живёт на стыке этих двух начал.</p>
+    </section>
+
     <section class="philosophy section" id="philosophy" aria-labelledby="philosophy-title">
       <div class="page-shell philosophy-grid">
         <div class="philosophy-media reveal-media">
@@ -102,74 +236,135 @@
         </div>
 
         <div class="philosophy-copy">
+          <p class="section-number reveal"><span>II</span></p>
           <p class="founder-line">Основана Марией Солдатовой</p>
           <h2 id="philosophy-title" class="section-title reveal">Порода начинается с отношения.</h2>
           <p class="lead reveal">Yeguada MS разводит чистопородных PRE и кросс-андалузов. Цель фермы - широкие движения, барочный экстерьер и доброжелательный характер.</p>
           <p class="body-copy reveal">Лошади растут в табуне, много двигаются по холмистым пастбищам и с раннего возраста общаются с человеком. Ферма сохраняет узнаваемый испанский тип в условиях русской земли.</p>
-          <div class="ornament-rule" aria-hidden="true"></div>
-          <blockquote class="philosophy-quote reveal">«Спокойная сила видна не в декоре. Она видна в движении лошади».</blockquote>
+
+          <div class="quote-block">
+            <span class="plate plate--quote" aria-hidden="true"><svg><use href="#orn-rosette"/></svg></span>
+            <div class="seam seam--mixed seam--short reveal" aria-hidden="true"></div>
+            <blockquote class="philosophy-quote reveal">«Спокойная сила видна не в декоре. Она видна в движении лошади».</blockquote>
+          </div>
         </div>
+      </div>
+    </section>
+
+    <section class="break" aria-label="Пастбища Yeguada MS">
+      <div class="break-media">
+        <img src="assets/farm-herd.jpg" alt="Табун андалузских лошадей у реки и русского леса на закате" width="1536" height="1024" loading="lazy">
+      </div>
+      <div class="break-shade" aria-hidden="true"></div>
+      <div class="break-copy page-shell">
+        <blockquote class="break-quote reveal">«Лошадь нельзя вырастить быстро. Её можно только дождаться».</blockquote>
+        <p class="break-attr reveal">Мария Солдатова</p>
       </div>
     </section>
 
     <section class="horses section" id="horses" aria-labelledby="horses-title">
       <div class="page-shell section-heading">
+        <p class="section-number reveal"><span>III</span></p>
         <h2 id="horses-title" class="section-title reveal">Лошади Yeguada MS</h2>
-        <p class="lead reveal">Жеребцы, кобылы и молодняк фермы. Откройте карточку, чтобы узнать основные данные о каждой лошади.</p>
-      </div>
-
-      <div class="horse-filters page-shell" role="tablist" aria-label="Категории лошадей">
-        <button class="filter-button is-active" type="button" role="tab" aria-selected="true" data-filter="sale">В продаже</button>
-        <button class="filter-button" type="button" role="tab" aria-selected="false" data-filter="stallion">Жеребцы</button>
-        <button class="filter-button" type="button" role="tab" aria-selected="false" data-filter="mare">Кобылы</button>
-        <button class="filter-button" type="button" role="tab" aria-selected="false" data-filter="young">Молодняк</button>
+        <p class="lead reveal">Жеребцы, кобылы и молодняк фермы. Откройте карточку, чтобы посмотреть промеры, происхождение и документы.</p>
       </div>
 
       <div class="horse-track" data-horse-track>
-        <button class="horse-card horse-card-tall reveal" type="button" data-category="sale stallion young" data-name="Магнифико YAD" data-details="Жеребчик PRE, 2023 года рождения. Буланая масть. Внук Bucefalo XXXII. Знает корду. Ожидаемый рост около 165 см." data-status="В продаже">
-          <span class="horse-image-wrap" style="--card-image: url('assets/stallion-motion.jpg')">
-            <img src="assets/stallion-motion.jpg" alt="Серая андалузская лошадь в движении" width="1024" height="1536" loading="lazy">
+        <button class="horse-card reveal" type="button"
+          data-name="Магнифико YAD"
+          data-status="В продаже"
+          data-details="Растёт в табуне на пастбищах фермы, знает корду и спокойно работает в руках. Ожидаемый рост около 165 см."
+          data-breed="PRE, жеребчик"
+          data-born="2023"
+          data-color="Буланая"
+          data-height="около 165 см (ожидаемый)"
+          data-origin="Внук Bucefalo XXXII"
+          data-place="Тульская область">
+          <span class="horse-image-wrap">
+            <img src="assets/horse-magnifico.webp" alt="Молодой андалузский жеребчик в движении по пастбищу" width="864" height="1320" loading="lazy">
+            <span class="corner-frame" aria-hidden="true"></span>
           </span>
           <span class="horse-card-copy">
             <span class="horse-name">Магнифико YAD</span>
             <span class="horse-meta">PRE, жеребчик, 2023</span>
-            <span class="horse-status">В продаже</span>
+            <span class="horse-foot">
+              <span class="horse-status">В продаже</span>
+              <span class="horse-price">Цена по запросу</span>
+            </span>
           </span>
         </button>
 
-        <button class="horse-card horse-card-wide reveal" type="button" data-category="sale stallion" data-name="Алеко" data-details="Вороной жеребец PRE, 2009 года рождения. Допущен в разведение, имеет испанские документы и 17 жеребят. Находится в Свердловской области." data-status="В продаже">
-          <span class="horse-image-wrap" style="--card-image: url('assets/bucefalo-02.jpg')">
-            <img src="assets/bucefalo-02.jpg" alt="Вороной конь в осеннем поле, архив Yeguada MS" width="1080" height="1174" loading="lazy">
+        <button class="horse-card reveal" type="button"
+          data-name="Алеко"
+          data-status="В продаже"
+          data-details="Допущен в разведение, имеет испанские документы. По данным фермы, 17 жеребят."
+          data-breed="PRE, жеребец"
+          data-born="2009"
+          data-color="Вороная"
+          data-height="уточняется"
+          data-origin="Испанские документы, допуск в разведение"
+          data-place="Свердловская область">
+          <span class="horse-image-wrap">
+            <img src="assets/bucefalo-02.jpg" alt="Вороной андалузский жеребец в осеннем поле" width="1080" height="1174" loading="lazy">
+            <span class="corner-frame" aria-hidden="true"></span>
           </span>
           <span class="horse-card-copy">
             <span class="horse-name">Алеко</span>
             <span class="horse-meta">PRE, жеребец, 2009</span>
-            <span class="horse-status">В продаже</span>
+            <span class="horse-foot">
+              <span class="horse-status">В продаже</span>
+              <span class="horse-price">Цена по запросу</span>
+            </span>
           </span>
         </button>
 
-        <button class="horse-card horse-card-portrait reveal" type="button" data-category="sale stallion young" data-name="Новилеро" data-details="Буланый андалузский жеребец, 2022 года рождения. Рост 167 см. Мягко заезжен, спокойно работает рядом с другими лошадьми. Находится в Подмосковье." data-status="В продаже">
-          <span class="horse-image-wrap" style="--card-image: url('assets/breeding-03.jpg')">
-            <img src="assets/breeding-03.jpg" alt="Буланая лошадь в поле, архив Yeguada MS" width="851" height="851" loading="lazy">
+        <button class="horse-card reveal" type="button"
+          data-name="Новилеро"
+          data-status="В продаже"
+          data-details="Мягко заезжен, спокойно работает рядом с другими лошадьми. Ровный, контактный характер."
+          data-breed="Андалуз, жеребец"
+          data-born="2022"
+          data-color="Буланая"
+          data-height="167 см"
+          data-origin="Андалузская линия"
+          data-place="Подмосковье">
+          <span class="horse-image-wrap">
+            <img src="assets/breeding-03.jpg" alt="Буланый андалузский жеребец в поле" width="851" height="851" loading="lazy">
+            <span class="corner-frame" aria-hidden="true"></span>
           </span>
           <span class="horse-card-copy">
             <span class="horse-name">Новилеро</span>
             <span class="horse-meta">Андалуз, жеребец, 2022</span>
-            <span class="horse-status">В продаже</span>
+            <span class="horse-foot">
+              <span class="horse-status">В продаже</span>
+              <span class="horse-price">Цена по запросу</span>
+            </span>
           </span>
         </button>
 
-        <button class="horse-card horse-card-low reveal" type="button" data-category="sale mare young" data-name="Далли" data-details="Алтайская чубарая кобыла, 2021 года рождения. Заезжена. Выращивается на больших пастбищах фермы. Информация о росте и происхождении уточняется." data-status="В продаже">
-          <span class="horse-image-wrap" style="--card-image: url('assets/breeding-02.jpg')">
-            <img src="assets/breeding-02.jpg" alt="Чубарая молодая лошадь в поле, архив Yeguada MS" width="1000" height="1000" loading="lazy">
+        <button class="horse-card reveal" type="button"
+          data-name="Далли"
+          data-status="В продаже"
+          data-details="Заезжена. Выращивается на больших пастбищах фермы, растёт в табуне."
+          data-breed="Алтайская, кобыла"
+          data-born="2021"
+          data-color="Чубарая"
+          data-height="уточняется"
+          data-origin="уточняется"
+          data-place="Тульская область">
+          <span class="horse-image-wrap">
+            <img src="assets/breeding-02.jpg" alt="Чубарая молодая кобыла в поле" width="1000" height="1000" loading="lazy">
+            <span class="corner-frame" aria-hidden="true"></span>
           </span>
           <span class="horse-card-copy">
             <span class="horse-name">Далли</span>
             <span class="horse-meta">Кобыла, 2021</span>
-            <span class="horse-status">В продаже</span>
+            <span class="horse-foot">
+              <span class="horse-status">В продаже</span>
+              <span class="horse-price">Цена по запросу</span>
+            </span>
           </span>
         </button>
-
       </div>
     </section>
 
@@ -182,6 +377,7 @@
         </figure>
 
         <div class="breeding-copy">
+          <p class="section-number reveal"><span>IV</span></p>
           <p class="section-kicker">Селекционная программа</p>
           <h2 id="breeding-title" class="section-title">Широкий ход. Барочный тип. Ясный характер.</h2>
           <p class="lead">Основной производитель фермы - Bucefalo XXXII. Серый жеребец PRE, импортированный из Испании и проверенный по потомству.</p>
@@ -193,25 +389,45 @@
             <div><dt>ANCCE</dt><dd>допуск в разведение</dd></div>
           </dl>
 
+          <div class="lineage reveal" aria-label="Линия Bucefalo XXXII">
+            <p class="lineage-title">Линия</p>
+            <ol class="lineage-track">
+              <li class="lineage-node">
+                <span class="lineage-mark" aria-hidden="true"></span>
+                <span class="lineage-name">Bucefalo XXXII</span>
+                <span class="lineage-note">PRE, 2007, импорт из Испании</span>
+              </li>
+              <li class="lineage-node">
+                <span class="lineage-mark" aria-hidden="true"></span>
+                <span class="lineage-name">Потомство фермы</span>
+                <span class="lineage-note">Более 100 голов по данным Yeguada MS</span>
+              </li>
+              <li class="lineage-node">
+                <span class="lineage-mark" aria-hidden="true"></span>
+                <span class="lineage-name">Магнифико YAD</span>
+                <span class="lineage-note">Внук, 2023, растёт на ферме</span>
+              </li>
+            </ol>
+          </div>
         </div>
       </div>
-
     </section>
 
     <section class="life section" id="life" aria-labelledby="life-title">
       <div class="page-shell section-heading life-heading">
+        <p class="section-number reveal"><span>V</span></p>
         <h2 id="life-title" class="section-title reveal">Земля формирует движение.</h2>
         <p class="lead reveal">Чернозёмные поля, холмистые пастбища, река и табунное содержание создают естественную среду для молодняка и взрослых лошадей.</p>
       </div>
 
       <div class="life-gallery" aria-label="Жизнь на ферме">
         <figure class="life-frame life-frame-wide reveal-media">
-          <img src="assets/farm-herd.jpg" alt="Табун андалузских лошадей у реки и русского леса" width="1536" height="1024" loading="lazy">
-          <figcaption>Табунное содержание у реки</figcaption>
+          <img src="assets/bucefalo-01.jpg" alt="Серый андалузский жеребец на пастбище фермы" width="1080" height="720" loading="lazy">
+          <figcaption>Пастбища у реки</figcaption>
         </figure>
         <figure class="life-frame reveal-media">
           <img src="assets/pasture.jpg" alt="Кобылы и жеребёнок на пастбище Yeguada MS" width="1080" height="720" loading="lazy">
-          <figcaption>Пастбища и молодняк</figcaption>
+          <figcaption>Кобылы и молодняк</figcaption>
         </figure>
         <figure class="life-frame reveal-media">
           <img src="assets/ranch-01.jpg" alt="Конная тренировка на территории ранчо" width="1080" height="720" loading="lazy">
@@ -222,12 +438,88 @@
           <figcaption>Лето в Тульской области</figcaption>
         </figure>
       </div>
+
+      <div class="seasons">
+        <div class="page-shell seasons-head">
+          <div class="seam seam--ru reveal" aria-hidden="true"></div>
+          <h3 class="seasons-title reveal">Год на ферме</h3>
+          <p class="seasons-lead reveal">Четыре состояния одной земли. Лошади проходят их полностью, и это видно в них.</p>
+        </div>
+
+        <div class="seasons-track">
+          <figure class="season-frame reveal-media">
+            <img src="assets/season-spring.webp" alt="Первые жеребята на весеннем пастбище" width="1122" height="1402" loading="lazy">
+            <figcaption><span class="season-label">Весна</span> Первые жеребята, талая вода в оврагах</figcaption>
+          </figure>
+          <figure class="season-frame reveal-media">
+            <img src="assets/season-summer.webp" alt="Табун в высокой траве летнего поля" width="1024" height="1536" loading="lazy">
+            <figcaption><span class="season-label">Лето</span> Табун в поле, долгие переходы</figcaption>
+          </figure>
+          <figure class="season-frame reveal-media">
+            <img src="assets/season-autumn.webp" alt="Лошади в тумане над осенним оврагом" width="1024" height="1536" loading="lazy">
+            <figcaption><span class="season-label">Осень</span> Туман над оврагами, тихая работа</figcaption>
+          </figure>
+          <figure class="season-frame reveal-media">
+            <img src="assets/season-winter.webp" alt="Серая лошадь среди заснеженных берёз" width="1024" height="1536" loading="lazy">
+            <figcaption><span class="season-label">Зима</span> Снег и берёзы, отдых и рост</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="buying section" id="buying" aria-labelledby="buying-title">
+      <div class="seam seam--ru seam--wide reveal" aria-hidden="true"></div>
+
+      <div class="page-shell section-heading">
+        <p class="section-number reveal"><span>VI</span></p>
+        <h2 id="buying-title" class="section-title reveal">Как проходит покупка.</h2>
+        <p class="lead reveal">Спокойный порядок без спешки. Лошадь такого уровня выбирают вживую и с документами на руках.</p>
+      </div>
+
+      <div class="page-shell steps">
+        <article class="step reveal">
+          <span class="step-num" aria-hidden="true">I</span>
+          <h3>Заявка</h3>
+          <p>Напишите, какая лошадь интересует. Пришлём актуальные фото, видео в движении и под седлом, состав документов.</p>
+        </article>
+        <article class="step reveal">
+          <span class="step-num" aria-hidden="true">II</span>
+          <h3>Визит на ферму</h3>
+          <p>Лошадь показывают в руках, на корде и в движении по пастбищу. Столько времени, сколько нужно для решения.</p>
+        </article>
+        <article class="step reveal">
+          <span class="step-num" aria-hidden="true">III</span>
+          <h3>Осмотр и документы</h3>
+          <p>Предпродажный ветеринарный осмотр, снимки по договорённости. Проверка паспорта и данных студбука.</p>
+        </article>
+        <article class="step reveal">
+          <span class="step-num" aria-hidden="true">IV</span>
+          <h3>Перевозка</h3>
+          <p>Помогаем с коневозом и оформлением перемещения. Первые недели на новом месте остаёмся на связи.</p>
+        </article>
+      </div>
+
+      <div class="page-shell included">
+        <div class="included-head">
+          <span class="included-mark" aria-hidden="true"><svg><use href="#orn-horseshoe"/></svg></span>
+          <h3>Что получает покупатель</h3>
+        </div>
+        <ul class="included-list">
+          <li>Паспорт лошади и данные студбука</li>
+          <li>Чип и ветеринарный паспорт</li>
+          <li>Предпродажный ветеринарный осмотр</li>
+          <li>Договор купли-продажи</li>
+          <li>Помощь с подбором коневоза</li>
+          <li>Сопровождение после переезда</li>
+        </ul>
+      </div>
     </section>
 
     <section class="contacts section" id="contacts" aria-labelledby="contacts-title">
       <div class="contact-landscape" aria-hidden="true"></div>
       <div class="page-shell contact-grid">
         <div class="contact-copy">
+          <p class="section-number reveal"><span>VII</span></p>
           <h2 id="contacts-title" class="section-title reveal">Некоторые решения нельзя принять по фотографии.</h2>
           <p class="lead reveal">Приезжайте познакомиться с лошадьми Yeguada MS лично.</p>
 
@@ -246,6 +538,8 @@
         </div>
 
         <form class="visit-form reveal" id="visit-form" novalidate>
+          <span class="form-corner form-corner--tl" aria-hidden="true"></span>
+          <span class="form-corner form-corner--br" aria-hidden="true"></span>
           <div class="form-row">
             <label for="name">Имя</label>
             <input id="name" name="name" type="text" autocomplete="name" required>
@@ -275,11 +569,55 @@
       </div>
 
       <div class="page-shell contact-bottom">
-        <div class="map-placeholder">
-          <div class="map-river" aria-hidden="true"></div>
-          <strong>Тульская область</strong>
-          <span>Точный маршрут высылаем после согласования визита</span>
-        </div>
+        <figure class="farm-map">
+          <svg viewBox="0 0 800 440" role="img" aria-labelledby="map-title map-desc" preserveAspectRatio="xMidYMid slice">
+            <title id="map-title">Расположение фермы Yeguada MS</title>
+            <desc id="map-desc">Схематическая карта: ферма в Тульской области, у излучины реки, между лесными массивами и полями.</desc>
+
+            <rect x="0" y="0" width="800" height="440" fill="url(#map-field)"/>
+
+            <g fill="url(#map-forest)" stroke="currentColor" stroke-width="0.8" opacity="0.55">
+              <path d="M-20 60C60 30 150 44 210 74C258 98 250 150 196 168C130 190 40 176 -20 148Z"/>
+              <path d="M600 -10C680 4 760 40 820 36V150C740 166 654 140 610 100C578 71 578 30 600 -10Z"/>
+              <path d="M120 320C190 300 270 316 300 356C324 388 292 430 232 442H96C60 412 66 342 120 320Z"/>
+            </g>
+
+            <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.34" stroke-dasharray="7 9">
+              <path d="M-20 400C120 366 250 340 400 300C540 262 660 250 820 258"/>
+              <path d="M430 -20C420 90 404 180 430 236"/>
+            </g>
+
+            <g fill="none" stroke="currentColor" opacity="0.62">
+              <path d="M-20 292C110 268 190 316 300 296C410 276 470 206 590 226C690 242 760 208 820 200" stroke-width="2.2"/>
+              <path d="M-20 302C110 278 190 326 300 306C410 286 470 216 590 236C690 252 760 218 820 210" stroke-width="0.7" opacity="0.5"/>
+            </g>
+
+            <g class="map-pin">
+              <path d="M430 250V196" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/>
+              <svg x="392" y="120" width="76" height="76" viewBox="0 0 200 200" opacity="0.9"><use href="#orn-rosette"/></svg>
+              <circle cx="430" cy="250" r="4" fill="currentColor"/>
+              <circle cx="430" cy="250" r="11" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+            </g>
+
+            <svg x="676" y="40" width="72" height="72" viewBox="0 0 80 80" opacity="0.55"><use href="#orn-compass"/></svg>
+
+            <g fill="currentColor" font-family="Cormorant Garamond, serif">
+              <text x="430" y="286" text-anchor="middle" font-size="26" letter-spacing="1">Yeguada MS</text>
+              <text x="430" y="310" text-anchor="middle" font-size="13" letter-spacing="3.4" opacity="0.66">ТУЛЬСКАЯ ОБЛАСТЬ</text>
+              <text x="120" y="264" font-size="13" letter-spacing="2.6" opacity="0.5">РЕКА</text>
+              <text x="640" y="360" font-size="13" letter-spacing="2.6" opacity="0.5">ПОЛЯ</text>
+            </g>
+
+            <g fill="none" stroke="currentColor" opacity="0.5">
+              <rect x="14.5" y="14.5" width="771" height="411"/>
+              <path d="M14.5 8.5L20.5 14.5L14.5 20.5L8.5 14.5Z"/>
+              <path d="M785.5 8.5L791.5 14.5L785.5 20.5L779.5 14.5Z"/>
+              <path d="M14.5 419.5L20.5 425.5L14.5 431.5L8.5 425.5Z"/>
+              <path d="M785.5 419.5L791.5 425.5L785.5 431.5L779.5 425.5Z"/>
+            </g>
+          </svg>
+          <figcaption>Точный маршрут высылаем после согласования визита.</figcaption>
+        </figure>
 
         <div class="faq" aria-label="Частые вопросы">
           <details>
@@ -294,24 +632,55 @@
             <summary>Где посмотреть документы PRE?</summary>
             <p>Документы и данные студбука показываются для конкретной лошади по запросу.</p>
           </details>
+          <details>
+            <summary>Помогаете ли с перевозкой в другой регион?</summary>
+            <p>Да. Подбираем коневоз и помогаем с оформлением перемещения.</p>
+          </details>
         </div>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="page-shell footer-grid">
-      <a class="brand" href="#top" aria-label="Yeguada MS, наверх">
-        <span class="brand-mark" aria-hidden="true">MS</span>
-        <span class="brand-wordmark">Yeguada MS</span>
-      </a>
-      <p>Частная конеферма андалузских лошадей Pura Raza Española.</p>
-      <p class="legal-placeholder">Информация на сайте не является публичной офертой.</p>
-      <span class="footer-meta">
-        <span>© <span data-year></span> Yeguada MS</span>
-        <span class="footer-separator" aria-hidden="true">•</span>
-        <span class="site-author">Сайт разработан <a href="https://naklikay.ru/" target="_blank" rel="noopener">Максимом Мирошниковым</a></span>
-      </span>
+    <div class="frieze" aria-hidden="true"></div>
+
+    <div class="page-shell footer-main">
+      <div class="footer-brand">
+        <a class="brand brand--footer" href="#top" aria-label="Yeguada MS, наверх">
+          <span class="brand-mark" aria-hidden="true">MS</span>
+          <span class="brand-wordmark">Yeguada MS</span>
+        </a>
+        <p class="footer-line">Частная конеферма андалузских лошадей Pura Raza Española в Тульской области.</p>
+        <p class="legal-placeholder">Информация на сайте не является публичной офертой.</p>
+      </div>
+
+      <nav class="footer-nav" aria-label="Навигация в подвале">
+        <p class="footer-heading">Разделы</p>
+        <a href="#two-lands">Две земли</a>
+        <a href="#philosophy">О ферме</a>
+        <a href="#horses">Лошади</a>
+        <a href="#breeding">Разведение</a>
+        <a href="#life">Жизнь фермы</a>
+        <a href="#buying">Как купить</a>
+      </nav>
+
+      <div class="footer-contact">
+        <p class="footer-heading">Связь</p>
+        <a class="footer-phone" href="tel:+79509080815">+7 950 908-08-15</a>
+        <span>Мария Солдатова</span>
+        <div class="footer-social">
+          <a href="https://t.me/andaluz_MS" target="_blank" rel="noreferrer">Telegram</a>
+          <a href="https://wa.me/79509080815" target="_blank" rel="noreferrer">WhatsApp</a>
+          <a href="https://vk.com/bucefaloxxxii" target="_blank" rel="noreferrer">ВКонтакте</a>
+          <a href="https://instagram.com/andaluz_ms/" target="_blank" rel="noreferrer">Instagram</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-shell footer-meta">
+      <span>© <span data-year></span> Yeguada MS</span>
+      <span class="footer-separator" aria-hidden="true">•</span>
+      <span class="site-author">Сайт разработан <a href="https://naklikay.ru/" target="_blank" rel="noopener">Максимом Мирошниковым</a></span>
     </div>
   </footer>
 
@@ -323,6 +692,11 @@
         <span class="dialog-status" data-dialog-status></span>
         <h2 id="dialog-title" data-dialog-title></h2>
         <p data-dialog-details></p>
+
+        <div class="seam seam--mixed seam--short is-visible" aria-hidden="true"></div>
+
+        <dl class="dialog-specs" data-dialog-specs></dl>
+
         <p class="dialog-note">Актуальные данные, дополнительные фото и документы предоставим по запросу.</p>
         <a class="button button-primary" href="#contacts" data-dialog-contact>Запросить материалы <span aria-hidden="true">→</span></a>
       </div>

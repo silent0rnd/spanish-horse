@@ -62,8 +62,25 @@ Serif is intentional here because the product is a heritage luxury equestrian br
 - No magnetic buttons and no pointer-follow physics.
 - Button hover changes color or border in 180-240ms.
 - Arrow may move 3-4px without moving the button.
-- Scroll reveal uses only opacity and translateY.
 - Hero uses one restrained curtain reveal and slow photographic depth.
+
+### Three motion layers, three properties
+
+Motion is cinematic: long durations, small amplitudes. It should read as weight, not as animation. Three layers run over the same photographs, so each owns a different CSS property and they must not be mixed. Putting two of them on `transform` breaks hover silently, because an animation always overrides a transition on the same property.
+
+| Layer | Property | Mechanism |
+|---|---|---|
+| Frame reveal | `clip-path` + `opacity` | transition on `.is-visible` |
+| Scroll drift | `translate` + `scale` | animation on `view()` |
+| Hover | `transform` | transition |
+
+- Text reveal stays opacity and translateY. Photography reveals with a bottom-up `clip-path` wipe over about 1.2s.
+- Rows of four frames stagger by roughly 100ms so a row assembles instead of flashing.
+- Scroll drift is about 3 percent of height. Frames inside a clipping wrapper need a compensating base `scale`; frames whose own edges are already dissolved by a mask do not, because the drift only shifts the dissolved band.
+- Horse cards never drift: `object-fit: contain` on a mount, so movement inside the frame reads as a defect.
+- The header progress bar is the Seam. Its motif crossfades from the Spanish lattice to the Russian lozenge as the page scrolls, so ornament reports position between the two lands instead of decorating. Bands crossfade edge to edge, keeping total opacity constant.
+- Every scroll-driven effect sits behind `@supports (animation-timeline: ...)` with a static fallback that is never blank.
+- Respect `prefers-reduced-motion`. Initial hidden states live inside `prefers-reduced-motion: no-preference`, and a `noscript` block neutralises them, so neither a reduced-motion setting nor a failed script can leave the page empty.
 - The breeding section stays in normal document flow and never captures scrolling.
 - Breeding facts remain static and fully readable without scroll-triggered animation.
 - Horse dialogs open only after the final image crop is ready.
@@ -74,18 +91,20 @@ Serif is intentional here because the product is a heritage luxury equestrian br
 ## Layout
 
 - Desktop shell: maximum 1500px with 6 percent side gutters.
-- Breakpoints: 375, 768, 1024 and 1440px.
+- Breakpoints as actually implemented: 1180, 900, 767 and 390px. The desktop nav collapses at 900.
 - No horizontal page scrolling.
 - Mobile layouts collapse to one column.
-- Horse filters wrap or use a two-column grid on mobile.
 - Breeding media comes before breeding copy and aligns to the section top.
-- Repeated split layouts are broken up by grid and full-width media sections.
+- Repeated split layouts are broken up by grid and full-width media sections. The page must never run more than two split layouts without a full-bleed break between them.
+- Section order carries the argument: hero, two lands, farm, cinematic break, horses, breeding, farm life and seasons, buying, contacts.
+- The catalogue has no filters. With four horses they read as empty; each horse is opened as a dossier instead.
 
 ## Image treatment
 
-- Show the full horse whenever identity or conformation matters.
-- Standard horse-card canvas: 4:5.
-- Fill unused card space with a soft blurred extension of the same photograph, never plain black bars.
+- The horse is always shown whole, ears to hooves. Conformation is the product; a cropped hindquarter or a cut tail is a defect, not a crop choice. This outranks filling the frame.
+- Standard horse-card canvas: 4:5 with `object-fit: contain` on a mounted plate - a 1px hairline border and a dark panel with padding, read as a catalogue print rather than a letterbox. The earlier blurred self-extension is gone: it was a workaround that read as letterboxing, and `cover` was tried and reverted because it cut the horses.
+- Because the mount absorbs any aspect ratio, source photographs do not need matching crops. Keep the dead margin under roughly 25 percent; past that, crop the empty sky and grass out of the source instead of shrinking the horse.
+- A missing image renders the ornamental plate from the Seam system, never a broken-image message.
 - Section photos may fade into the page at top and bottom, but the subject stays clear.
 - Avoid hard image-to-background seams and excessive darkness.
 - Apply one muted olive, silver and warm-highlight grade across all photography.
@@ -95,7 +114,43 @@ Serif is intentional here because the product is a heritage luxury equestrian br
 
 - Fixed grain is permitted at 2-3 percent opacity only.
 - A subtle fixed vignette may deepen the frame on desktop and disappears on mobile.
-- Russian plant ornament appears once as a restrained gold line, never as a repeated theme.
+- Ornament follows the Seam system below. The earlier rule limiting ornament to a single gold line is superseded.
+
+## Ornament: the Seam
+
+The Russian dotted lozenge (the "sown field" motif of spinning-wheel carving) and the Spanish azulejo lattice lozenge are the same figure read two ways. Every ornament on the site derives from that shared primitive, so decoration carries the brand idea instead of sitting on top of it.
+
+Two motif families:
+
+| Russian | Spanish |
+|---|---|
+| dotted lozenge, sown field | azulejo lattice |
+| northern eave tooth | wrought-iron scroll |
+| river wave | horseshoe |
+| birch tick | radial rosette |
+
+Rules:
+
+- The motif shifts down the page. Seams read Spanish near the hero and Russian by the lower sections. This progression is the narrative, not a decorative accident.
+- Stroke weight is 1px. Fill is never used.
+- Gold only, drawn from `--gold` and `--gold-deep`. Opacity is governed by `--orn-opacity` (0.5) and `--orn-plate-opacity` (0.05).
+- Motifs are implemented as CSS masks over a token-coloured background, so the palette can never drift.
+- Seams draw outward from the centre on reveal. The initial clipped state lives inside `prefers-reduced-motion: no-preference`, so ornament stays visible if scripting fails.
+- No ornament carpets. Repeating bands are confined to section seams and the footer frieze; the rosette appears only as a low-opacity plate behind a quote and as the map marker.
+- If the page ever reads folkloric, lower `--orn-opacity` and drop the rosette plates before touching the seams.
+
+## Two-land grade
+
+The duality is carried by temperature, not by subject matter. Spanish frames are warmer and drier, Russian frames cooler and damper, both inside one muted palette.
+
+This split lives in the photography, not in CSS. Shots are commissioned already graded, so the section filters only unify them and are deliberately weak. Do not strengthen them to "fix" a frame that arrives ungraded: regrade the frame instead, or it will drift away from the rest of the page.
+
+Two consequences worth keeping:
+
+- `.diptych-panel--es` carries only a trace of sepia. The Spanish plate already sits around +31 on the red-minus-blue axis; more sepia turns it orange.
+- `.season-frame img` carries no sepia at all. The four seasonal frames run a temperature arc from warm spring to cold winter, and a uniform sepia would flatten that arc and tint the snow.
+
+Reference values for replacement frames are recorded in `ASSET_PROMPTS.md`.
 
 ## Content rules
 

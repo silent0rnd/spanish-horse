@@ -4,12 +4,12 @@
   document.body.classList.remove("is-loading");
   document.body.classList.add("is-ready");
 
-  document.querySelectorAll("[data-year]").forEach((node) => {
+  document.querySelectorAll(".footer-meta [data-year]").forEach((node) => {
     node.textContent = String(new Date().getFullYear());
   });
 
   const header = document.querySelector("[data-header]");
-  const headerScene = document.querySelector(".hero, .horse-hero");
+  const headerScene = document.querySelector(".hero");
 
   if (header && headerScene && !header.classList.contains("is-solid")) {
     const headerObserver = new IntersectionObserver(
@@ -91,34 +91,10 @@
 
   document.querySelectorAll("img").forEach((image) => {
     image.addEventListener("error", () => {
-      const wrapper = image.closest(".horse-image-wrap, .dialog-image-wrap, figure, .hero-media, .horse-hero-media");
+      const wrapper = image.closest(
+        ".horse-image-wrap, .dialog-image-wrap, figure, .hero-media, .break-media"
+      );
       if (wrapper) wrapper.classList.add("image-error");
-    });
-  });
-
-  const filterButtons = document.querySelectorAll("[data-filter]");
-  const horseCards = document.querySelectorAll("[data-category]");
-  const emptyState = document.querySelector("[data-empty-state]");
-
-  filterButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const filter = button.dataset.filter;
-      let visibleCount = 0;
-
-      filterButtons.forEach((item) => {
-        const active = item === button;
-        item.classList.toggle("is-active", active);
-        item.setAttribute("aria-selected", String(active));
-      });
-
-      horseCards.forEach((card) => {
-        const categories = (card.dataset.category || "").split(" ");
-        const visible = categories.includes(filter);
-        card.hidden = !visible;
-        if (visible) visibleCount += 1;
-      });
-
-      if (emptyState) emptyState.hidden = visibleCount !== 0;
     });
   });
 
@@ -128,10 +104,37 @@
     const dialogDetails = horseDialog.querySelector("[data-dialog-details]");
     const dialogStatus = horseDialog.querySelector("[data-dialog-status]");
     const dialogImage = horseDialog.querySelector("[data-dialog-image]");
+    const dialogSpecs = horseDialog.querySelector("[data-dialog-specs]");
     const dialogClose = horseDialog.querySelector(".dialog-close");
     const dialogContact = horseDialog.querySelector("[data-dialog-contact]");
     let activeHorseCard = null;
     let dialogRevealFrame = 0;
+
+    // Досье собирается из data-атрибутов карточки. Пустые поля
+    // не выводятся, чтобы в модалке не оставалось пустых строк.
+    const specFields = [
+      ["breed", "Порода и пол"],
+      ["born", "Год рождения"],
+      ["color", "Масть"],
+      ["height", "Рост в холке"],
+      ["origin", "Происхождение"],
+      ["place", "Местонахождение"]
+    ];
+
+    const renderSpecs = (card) => {
+      dialogSpecs.textContent = "";
+      specFields.forEach(([key, label]) => {
+        const value = card.dataset[key];
+        if (!value) return;
+        const row = document.createElement("div");
+        const dt = document.createElement("dt");
+        const dd = document.createElement("dd");
+        dt.textContent = label;
+        dd.textContent = value;
+        row.append(dt, dd);
+        dialogSpecs.append(row);
+      });
+    };
 
     const closeHorseDialog = () => {
       if (!horseDialog.open) return;
@@ -150,6 +153,7 @@
         dialogTitle.textContent = card.dataset.name || "Лошадь Yeguada MS";
         dialogDetails.textContent = card.dataset.details || "Данные уточняются.";
         dialogStatus.textContent = card.dataset.status || "";
+        renderSpecs(card);
         dialogImage.src = sourceImage ? sourceImage.currentSrc || sourceImage.src : "";
         dialogImage.alt = sourceImage ? sourceImage.alt : "";
         horseDialog.classList.add("is-preparing");
