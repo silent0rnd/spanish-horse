@@ -371,8 +371,11 @@ summary {
   letter-spacing: 0.28em;
 }
 
+/* Разрядка контейнера разбивала бы римские цифры на отдельные знаки:
+   II читалось бы как I I, а IV как I V. */
 .section-number span {
   flex: 0 0 auto;
+  letter-spacing: 0.04em;
 }
 
 .section-number::before {
@@ -2104,7 +2107,7 @@ summary {
   color: var(--gold);
   font-family: var(--display);
   font-size: 1.45rem;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.04em;
   line-height: 1;
 }
 
