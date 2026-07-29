@@ -198,16 +198,54 @@ Avoid: fantasy, fairy-tale glow, saturated sunset, decorative frame
 
 Карточки рисуются в канве 4:5 через `object-fit: contain` на подложке-паспарту, поэтому лошадь всегда видна целиком и исходники могут быть любых пропорций. Свободное поле держим примерно до 25 процентов: если больше, надо не уменьшать лошадь, а вырезать из исходника лишнее небо и траву.
 
-Что сейчас используется: `horse-magnifico.webp` (Магнифико YAD), `bucefalo-02.jpg` (Алеко), `breeding-03.jpg` (Новилеро), `breeding-02.jpg` (Далли).
+Все четыре карточки собраны отдельными файлами `horse-*.webp`. Оригиналы не тронуты и лежат рядом.
 
-`horse-magnifico.webp` - подрезанный кадр из `stallion-motion.jpg` 864x1821. Исходник был вертикалью обойного формата: лошадь в середине, сверху деревья, снизу пустая трава. Обрезан по y 300-1620, оригинал сохранён.
+| Карточка | Файл | Размер | Из чего собран |
+|---|---|---|---|
+| Магнифико YAD | `horse-magnifico.webp` | 864x1320 | кроп `stallion-motion.jpg` по y 300-1620 |
+| Алеко | `horse-aleko.webp` | 939x1174 | кроп `bucefalo-02.jpg` по x 37-976 |
+| Новилеро | `horse-novilero.webp` | 1122x1402 | новая генерация |
+| Далли | `horse-dalli.webp` | 1122x1402 | новая генерация |
 
-Два кадра требуют замены:
+### Единый грейд каталога
 
-- **Новилеро, `breeding-03.jpg`** - круп, задние ноги и хвост обрезаны в самом файле-исходнике. Вёрсткой это не лечится, нужна другая фотография с лошадью целиком.
-- **Далли, `breeding-02.jpg`** - в левом верхнем углу вотермарка стороннего фотографа. Для коммерческого сайта нужна либо лицензия, либо другой кадр.
+Исходники были из четырёх разных съёмок и рядом не читались как серия: Алеко приходил с яркостью 99, насыщенностью 48 и теплом +62 - рыжая осень против приглушённого серо-зелёного у остальных.
 
-Требования к замене: лошадь целиком от ушей до копыт, запас по краям, ровный горизонт, один грейд со всей съёмкой, никакой посторонней амуниции и техники в кадре, никаких чужих вотермарок.
+Все четыре сведены к общему знаменателю **яркость 49.5, насыщенность 20.5, тепло +13**. Эталоном взята пара новых кадров: они сняты в одну сессию и уже несут нужный грейд.
+
+Сведение сделано скриптом на Pillow: подбор насыщенности, яркости и поканальных коэффициентов R и B итеративно, до попадания в допуск. При замене любого кадра его нужно привести к тем же трём числам, иначе он выпадет из ряда.
+
+### Требования к новым кадрам
+
+Вертикаль, лошадь целиком от ушей до копыт с запасом по всем краям, чистый профиль сбоку, ровная стойка, никакой амуниции, ровный горизонт, приглушённый грейд, никаких чужих вотермарок.
+
+Промпты, по которым сделаны Новилеро и Далли, лежат ниже в разделе «Замена карточек каталога».
+
+### Осталось заменить
+
+Обе фотографии в карточках Магнифико и Алеко - временные: `stallion-motion.jpg` сгенерирован, `bucefalo-02.jpg` взят из архива сайта. Перед публикацией нужны реальные снимки этих двух лошадей.
+
+## Замена карточек каталога
+
+Промпты, по которым сделаны `horse-novilero.webp` и `horse-dalli.webp`. Обе отправлялись в одной сессии после общего стилевого блока, с приложенным `hero-cinematic-v2.webp` как референсом. Если понадобится третья лошадь в том же ряду - берите этот же каркас, иначе кадр не сядет в серию.
+
+Ключевое требование, которое надо повторять дословно: **вся лошадь внутри кадра, ни одна часть не касается края**. Без него генератор стабильно обрезает круп и хвост - ровно так был испорчен предыдущий кадр Новилеро.
+
+```text
+Vertical portrait frame.
+
+A [МАСТЬ] [ПОРОДА] [пол], [возраст], standing calmly in a clean side profile - a conformation shot, the way a stud farm photographs a horse for sale. [ОПИСАНИЕ МАСТИ И СЛОЖЕНИЯ].
+
+He/She stands square and still on level ground, head carried naturally. Not rearing, not galloping, not in motion.
+
+Setting: a mown summer pasture, low green grass, a soft dark treeline far behind and thrown well out of focus. Nothing else in the frame.
+
+Light: flat overcast daylight, gentle, no hard shadows. The horse reads clearly against the darker background.
+
+Critical: the whole horse must be visible with room to spare - the full tail, the hindquarters, the muzzle and all four hooves, none of them touching or crossing the edge of the frame. Keep generous empty space on both sides.
+
+No text, no logos, no watermarks. No people. No saddle, bridle, halter or tack. Anatomically correct: exactly four legs, correct proportions, realistic hooves. Muted palette only: charcoal, smoke grey, deep forest green. No saturated colour, no orange sunset, no lens flare.
+```
 
 ## `assets/og-cover.jpg`
 
