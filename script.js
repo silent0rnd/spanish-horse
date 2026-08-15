@@ -107,8 +107,14 @@
     const dialogSpecs = horseDialog.querySelector("[data-dialog-specs]");
     const dialogClose = horseDialog.querySelector(".dialog-close");
     const dialogContact = horseDialog.querySelector("[data-dialog-contact]");
+    const dialogImageWrap = dialogImage.closest(".dialog-image-wrap");
     let activeHorseCard = null;
-    let dialogRevealFrame = 0;
+
+    // Окно открывается сразу, кадр догружается отдельно. Пока кадра нет,
+    // плашка .image-error работает как состояние загрузки.
+    const clearFrameLoading = () => dialogImageWrap.classList.remove("is-frame-loading");
+    dialogImage.addEventListener("load", clearFrameLoading);
+    dialogImage.addEventListener("error", clearFrameLoading);
 
     // Досье собирается из data-атрибутов карточки. Пустые поля
     // не выводятся, чтобы в модалке не оставалось пустых строк.
@@ -138,8 +144,6 @@
 
     const closeHorseDialog = () => {
       if (!horseDialog.open) return;
-      window.cancelAnimationFrame(dialogRevealFrame);
-      horseDialog.classList.remove("is-preparing");
       horseDialog.close();
       document.body.classList.remove("dialog-open");
       activeHorseCard?.focus({ preventScroll: true });
@@ -147,7 +151,7 @@
     };
 
     document.querySelectorAll("button.horse-card[data-name]").forEach((card) => {
-      card.addEventListener("click", async () => {
+      card.addEventListener("click", () => {
         const sourceImage = card.querySelector("img");
         activeHorseCard = card;
         dialogTitle.textContent = card.dataset.name || "Лошадь Yeguada MS";
@@ -156,36 +160,17 @@
         renderSpecs(card);
         dialogImage.src = sourceImage ? sourceImage.currentSrc || sourceImage.src : "";
         dialogImage.alt = sourceImage ? sourceImage.alt : "";
-        horseDialog.classList.add("is-preparing");
-
-        if (dialogImage.decode) {
-          try {
-            await dialogImage.decode();
-          } catch (_) {
-            // Browser will still display the cached or fallback image.
-          }
-        }
-
-        if (activeHorseCard !== card) return;
+        dialogImageWrap.classList.remove("image-error");
+        dialogImageWrap.classList.toggle("is-frame-loading", !dialogImage.complete);
 
         document.body.classList.add("dialog-open");
         horseDialog.showModal();
-        horseDialog.getBoundingClientRect();
-        dialogRevealFrame = window.requestAnimationFrame(() => {
-          dialogRevealFrame = window.requestAnimationFrame(() => {
-            if (!horseDialog.open) return;
-            horseDialog.classList.remove("is-preparing");
-            dialogClose.focus({ preventScroll: true });
-          });
-        });
       });
     });
 
     dialogClose.addEventListener("click", closeHorseDialog);
     dialogContact.addEventListener("click", () => {
-      window.cancelAnimationFrame(dialogRevealFrame);
       horseDialog.close();
-      horseDialog.classList.remove("is-preparing");
       document.body.classList.remove("dialog-open");
       activeHorseCard = null;
     });

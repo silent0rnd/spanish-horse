@@ -72,6 +72,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-height) + 24px);
   color-scheme: dark;
 }
 
@@ -428,9 +429,18 @@ summary {
   border-left: 0;
 }
 
+/* ponytail: страховка. Если script.js не пришёл, класс не снимут.
+   Через 2с показываем страницу сами, чтобы не остался чёрный экран. */
 .is-loading main,
 .is-loading .site-header {
   opacity: 0;
+  animation: loading-failsafe 0.4s ease 2s forwards;
+}
+
+@keyframes loading-failsafe {
+  to {
+    opacity: 1;
+  }
 }
 
 .is-ready main,
@@ -1108,7 +1118,20 @@ summary {
 }
 
 .breeding-media {
+  display: grid;
   margin: 0;
+  gap: clamp(28px, 3vw, 48px);
+}
+
+.breeding-shot {
+  margin: 0;
+}
+
+/* Второй кадр закрывает пустоту под главным фото и выравнивает высоту колонок.
+   Ширина ограничена, чтобы вертикальный кадр не обрезался и не рос бесконечно. */
+.breeding-shot--inset {
+  width: min(62%, 300px);
+  margin-left: auto;
 }
 
 @media (min-width: 901px) {
@@ -1580,11 +1603,7 @@ summary {
   color: var(--ivory);
 }
 
-.horse-dialog.is-preparing {
-  visibility: hidden;
-}
-
-.horse-dialog[open]:not(.is-preparing) {
+.horse-dialog[open] {
   animation: horse-dialog-enter 0.28s ease-out both;
 }
 
@@ -1593,11 +1612,7 @@ summary {
   backdrop-filter: blur(8px);
 }
 
-.horse-dialog.is-preparing::backdrop {
-  opacity: 0;
-}
-
-.horse-dialog[open]:not(.is-preparing)::backdrop {
+.horse-dialog[open]::backdrop {
   animation: horse-backdrop-enter 0.24s ease-out both;
 }
 
@@ -1636,7 +1651,8 @@ summary {
     #0b0e0c;
 }
 
-/* В досье лошадь тем более должна быть видна целиком */
+/* В досье лошадь тем более должна быть видна целиком.
+   Кадр проявляется, а не подставляется рывком. */
 .dialog-image-wrap img {
   display: block;
   width: 100%;
@@ -1645,6 +1661,11 @@ summary {
   object-fit: contain;
   object-position: center;
   filter: saturate(0.78) contrast(1.04) brightness(0.95) sepia(0.04);
+  transition: opacity 0.4s ease-out;
+}
+
+.dialog-image-wrap.is-frame-loading img {
+  opacity: 0;
 }
 
 .dialog-copy {
@@ -1655,7 +1676,7 @@ summary {
   align-content: center;
 }
 
-.horse-dialog[open]:not(.is-preparing) .dialog-copy {
+.horse-dialog[open] .dialog-copy {
   animation: horse-dialog-copy-enter 0.3s ease-out 0.04s both;
 }
 
@@ -1704,8 +1725,10 @@ summary {
 }
 
 /* Недостающий кадр отрисовывается орнаментальной плашкой из системы Шва,
-   а не сообщением об ошибке: пустое место должно читаться как графика. */
-.image-error {
+   а не сообщением об ошибке: пустое место должно читаться как графика.
+   Та же плашка служит состоянием загрузки кадра в досье. */
+.image-error,
+.dialog-image-wrap.is-frame-loading {
   position: relative;
   overflow: hidden;
   background:
@@ -1717,7 +1740,8 @@ summary {
   visibility: hidden;
 }
 
-.image-error::before {
+.image-error::before,
+.dialog-image-wrap.is-frame-loading::before {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1732,7 +1756,8 @@ summary {
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.6'%3E%3Ccircle cx='100' cy='100' r='97'/%3E%3Ccircle cx='100' cy='100' r='70'/%3E%3Ccircle cx='100' cy='100' r='38'/%3E%3Cpath d='M100 30L170 100L100 170L30 100Z'/%3E%3Cpath d='M50 50H150V150H50Z'/%3E%3Cpath d='M100 82L118 100L100 118L82 100Z'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
 }
 
-.image-error::after {
+.image-error::after,
+.dialog-image-wrap.is-frame-loading::after {
   position: absolute;
   right: 0;
   bottom: 12%;
