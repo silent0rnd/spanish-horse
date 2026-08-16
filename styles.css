@@ -1690,7 +1690,9 @@ summary {
   padding: clamp(32px, 5vw, 76px);
   min-height: 0;
   overflow-y: auto;
-  align-content: center;
+  /* safe: центрируем, пока досье помещается; при переполнении прижимаем
+     к верху, иначе начало текста уходит выше scrollTop = 0 и не достаётся. */
+  align-content: safe center;
 }
 
 .horse-dialog[open] .dialog-copy {
