@@ -88,6 +88,18 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Абзацный текст: браузер сам не оставляет одинокое слово на последней строке. */
+p,
+li,
+dd,
+dt,
+figcaption,
+blockquote,
+summary,
+label {
+  text-wrap: pretty;
+}
+
 body.dialog-open {
   overflow: hidden;
 }
@@ -1127,11 +1139,16 @@ summary {
   margin: 0;
 }
 
-/* Второй кадр закрывает пустоту под главным фото и выравнивает высоту колонок.
-   Ширина ограничена, чтобы вертикальный кадр не обрезался и не рос бесконечно. */
-.breeding-shot--inset {
-  width: min(62%, 300px);
-  margin-left: auto;
+/* Пара вертикальных кадров под главным фото. Закрывает пустоту в левой колонке. */
+.breeding-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(16px, 1.8vw, 24px);
+}
+
+.breeding-media .breeding-pair img {
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
 }
 
 @media (min-width: 901px) {
