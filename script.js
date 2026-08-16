@@ -21,6 +21,44 @@
     headerObserver.observe(headerScene);
   }
 
+  // Параллакс первого экрана по курсору. Сюда пишутся только две переменные,
+  // всю глубину и сглаживание раскладывает CSS. Запись раз в кадр: pointermove
+  // приходит чаще, чем экран успевает перерисоваться.
+  if (headerScene && !reducedMotion && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    let pending = false;
+    let mx = 0;
+    let my = 0;
+
+    const applyPointer = () => {
+      pending = false;
+      headerScene.style.setProperty("--mx", mx.toFixed(3));
+      headerScene.style.setProperty("--my", my.toFixed(3));
+    };
+
+    const queuePointer = () => {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(applyPointer);
+    };
+
+    headerScene.addEventListener(
+      "pointermove",
+      (event) => {
+        const box = headerScene.getBoundingClientRect();
+        mx = (event.clientX - box.left) / box.width * 2 - 1;
+        my = (event.clientY - box.top) / box.height * 2 - 1;
+        queuePointer();
+      },
+      { passive: true }
+    );
+
+    headerScene.addEventListener("pointerleave", () => {
+      mx = 0;
+      my = 0;
+      queuePointer();
+    });
+  }
+
   const sectionNavLinks = Array.from(
     document.querySelectorAll('.desktop-nav a[href^="#"], #mobile-menu a[href^="#"]')
   );
@@ -69,7 +107,28 @@
       document.body.style.overflow = nextOpen ? "hidden" : "";
     });
 
-    mobileMenu.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
+    mobileMenu.querySelectorAll("a").forEach((link, index) => {
+      link.style.setProperty("--i", String(index));
+      link.addEventListener("click", closeMenu);
+    });
+  }
+
+  // Цитата разрыва набирается по словам: фраза про ожидание, поэтому
+  // одним кадром её показывать нельзя. Режем только по обычным пробелам -
+  // неразрывные держат типографику и остаются внутри слова.
+  const breakQuote = document.querySelector(".break-quote");
+  if (breakQuote) {
+    const words = breakQuote.textContent.split(" ");
+    breakQuote.textContent = "";
+    words.forEach((word, index) => {
+      const span = document.createElement("span");
+      span.className = "quote-word";
+      span.style.setProperty("--i", String(index));
+      span.textContent = word;
+      breakQuote.append(span);
+      if (index < words.length - 1) breakQuote.append(" ");
+    });
+    breakQuote.classList.add("is-typeset");
   }
 
   const revealItems = document.querySelectorAll(".reveal, .reveal-media");

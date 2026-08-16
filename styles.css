@@ -34,6 +34,21 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* Золото объявлено цветом, а не просто переменной: незарегистрированную
+   переменную браузер меняет скачком, а нам нужен плавный налив света.
+   Отсюда общее свечение страницы - см. gold-breath. */
+@property --gold {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #c5a36a;
+}
+
+@property --gold-deep {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #9b7844;
+}
+
 :root {
   --ink: #0a0c0b;
   --ink-soft: #111410;
@@ -41,10 +56,27 @@
   --smoke: #a8aaa4;
   --ivory: #e8e6df;
   --ivory-muted: #c7c5be;
+  /* ЗОЛОТО. Никогда не пишите его числом в правилах - только через эти
+     токены. Всё, что берёт цвет отсюда, само подхватывает общее
+     свечение страницы (gold-breath) и живёт в одном такте с остальными
+     украшениями. Хардкод #c5a36a в новом правиле выпадет из свечения и
+     будет выглядеть тусклой заплаткой.
+
+     Полупрозрачное золото берите через color-mix от --gold, а не
+     через rgba с числами - см. --line-gold ниже.
+
+     --gold и --gold-deep дышат. --gold-fixed и --gold-deep-fixed стоят
+     ровно: они же задают точку покоя для самого свечения. */
   --gold: #c5a36a;
   --gold-deep: #9b7844;
+  --gold-fixed: #c5a36a;
+  --gold-deep-fixed: #9b7844;
   --line: rgba(232, 230, 223, 0.17);
+
+  /* Хайрлайны выводятся из --gold, поэтому дышат вместе с ним.
+     Первая строка - запасная для браузеров без color-mix. */
   --line-gold: rgba(197, 163, 106, 0.42);
+  --line-gold: color-mix(in srgb, var(--gold) 42%, transparent);
   --display: "Cormorant Garamond", "Times New Roman", serif;
   --sans: "Manrope", "Segoe UI", sans-serif;
   --shell: min(88vw, 1500px);
@@ -64,6 +96,27 @@
   /* ornament */
   --orn-opacity: 0.5;
   --orn-plate-opacity: 0.05;
+  --gold-light: #e2c88f;
+  --orn-glint-period: 4.5s;
+
+  /* Кромка золота: перелив вместо ровной краски. Одна форма на все
+     орнаменты, поэтому блик у всех читается как один и тот же металл. */
+  --orn-metal: linear-gradient(
+    90deg,
+    var(--gold-deep) 0 30%,
+    var(--gold) 40%,
+    var(--gold-light) 46%,
+    var(--gold) 52%,
+    var(--gold-deep) 62% 100%
+  );
+  --orn-metal-v: linear-gradient(
+    180deg,
+    var(--gold-deep) 0 30%,
+    var(--gold) 40%,
+    var(--gold-light) 46%,
+    var(--gold) 52%,
+    var(--gold-deep) 62% 100%
+  );
 }
 
 * {
@@ -79,7 +132,11 @@ html {
 body {
   position: relative;
   margin: 0;
+  /* clip режет так же, но не делает из body контейнер прокрутки:
+     иначе scroll-driven анимации считают прогресс по нему и стоят.
+     Вторая строка перебивает первую там, где clip понимают. */
   overflow-x: hidden;
+  overflow-x: clip;
   background: var(--ink);
   color: var(--ivory);
   font-family: var(--sans);
@@ -128,7 +185,7 @@ body::after {
 }
 
 ::selection {
-  background: var(--gold);
+  background: var(--gold-fixed);
   color: var(--ink);
 }
 
@@ -156,8 +213,10 @@ summary {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Рамка фокуса намеренно не дышит: мерцающий указатель - помеха,
+   а не украшение. */
 :focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--gold-fixed);
   outline-offset: 4px;
 }
 
@@ -269,7 +328,8 @@ summary {
   position: absolute;
   inset: 0;
   content: "";
-  background: var(--gold-deep);
+  background: var(--orn-metal);
+  background-size: 300% 100%;
   opacity: var(--orn-opacity);
   -webkit-mask-repeat: repeat-x;
   mask-repeat: repeat-x;
@@ -293,8 +353,10 @@ summary {
   mask-size: 96px 16px;
 }
 
-/* Русский: засеянное поле, ромб с точкой и берёзовые насечки */
-.seam--ru::before {
+/* Русский: засеянное поле, ромб с точкой и берёзовые насечки.
+   Ту же маску переиспользует шов под открытым вопросом FAQ. */
+.seam--ru::before,
+.faq summary::before {
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 8H14M34 8H48'/%3E%3Cpath d='M24 2L34 8L24 14L14 8Z'/%3E%3Cpath d='M5 4.5V11.5M43 4.5V11.5'/%3E%3C/g%3E%3Ccircle cx='24' cy='8' r='1.5' fill='%23000'/%3E%3C/svg%3E");
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='16'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 8H14M34 8H48'/%3E%3Cpath d='M24 2L34 8L24 14L14 8Z'/%3E%3Cpath d='M5 4.5V11.5M43 4.5V11.5'/%3E%3C/g%3E%3Ccircle cx='24' cy='8' r='1.5' fill='%23000'/%3E%3C/svg%3E");
   -webkit-mask-size: 48px 16px;
@@ -317,6 +379,42 @@ summary {
   width: min(460px, 100%);
 }
 
+/* Клеймение. Один раз на весь сайт, на входе в «Как купить»:
+   подкова бьёт по шву, и шов от удара расходится в стороны.
+   Дальше идёт разговор про паспорт, чип и договор - клеймо
+   ставит на этом «заверено». Покой клейма - остывший металл,
+   он же состояние без JS и при reduce.
+
+   Коробка шва здесь выше линии: маска шва режет всё по border-box,
+   а подкова выступает над ним. Сама линия при этом не съезжает -
+   орнамент рисуется по центру (mask-position: center), а top
+   гасит прибавку высоты. */
+.seam--brand {
+  top: -16px;
+  height: 48px;
+  pointer-events: none;
+}
+
+.seam--brand::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 28px;
+  height: 32px;
+  margin: -16px 0 0 -14px;
+  content: "";
+  background: var(--gold-deep);
+  opacity: 0.5;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 46'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M5 43C0 25 4 4 20 4C36 4 40 25 35 43'/%3E%3Cpath d='M13 43C10 27 13 12 20 12C27 12 30 27 27 43'/%3E%3Cpath d='M5 43H13M35 43H27'/%3E%3C/g%3E%3Cg fill='%23000'%3E%3Ccircle cx='8.5' cy='33' r='1.1'/%3E%3Ccircle cx='10' cy='23' r='1.1'/%3E%3Ccircle cx='13.5' cy='14' r='1.1'/%3E%3Ccircle cx='26.5' cy='14' r='1.1'/%3E%3Ccircle cx='30' cy='23' r='1.1'/%3E%3Ccircle cx='31.5' cy='33' r='1.1'/%3E%3C/g%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 46'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M5 43C0 25 4 4 20 4C36 4 40 25 35 43'/%3E%3Cpath d='M13 43C10 27 13 12 20 12C27 12 30 27 27 43'/%3E%3Cpath d='M5 43H13M35 43H27'/%3E%3C/g%3E%3Cg fill='%23000'%3E%3Ccircle cx='8.5' cy='33' r='1.1'/%3E%3Ccircle cx='10' cy='23' r='1.1'/%3E%3Ccircle cx='13.5' cy='14' r='1.1'/%3E%3Ccircle cx='26.5' cy='14' r='1.1'/%3E%3Ccircle cx='30' cy='23' r='1.1'/%3E%3Ccircle cx='31.5' cy='33' r='1.1'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
 /* Вертикальный шов диптиха: хайрлайн, ромбы и берёзовые насечки */
 .seam-v {
   position: relative;
@@ -329,7 +427,8 @@ summary {
   position: absolute;
   inset: 0;
   content: "";
-  background: var(--gold);
+  background: var(--orn-metal-v);
+  background-size: 100% 300%;
   opacity: var(--orn-opacity);
   -webkit-mask-repeat: repeat-y;
   mask-repeat: repeat-y;
@@ -345,7 +444,8 @@ summary {
 .frieze {
   width: 100%;
   height: 22px;
-  background: var(--gold-deep);
+  background: var(--orn-metal);
+  background-size: 300% 100%;
   opacity: 0.36;
   -webkit-mask-repeat: repeat-x;
   mask-repeat: repeat-x;
@@ -405,7 +505,14 @@ summary {
   max-width: 120px;
   height: 1px;
   content: "";
-  background: linear-gradient(90deg, var(--line-gold), transparent);
+  /* Два слоя: сверху едет блик, снизу лежит прежний хайрлайн.
+     Одним слоем нельзя - его собственное затухание вправо уехало бы
+     вместе с бликом. */
+  background:
+    linear-gradient(90deg, transparent 40%, var(--gold-light) 47%, transparent 54%),
+    linear-gradient(90deg, var(--line-gold), transparent);
+  background-size: 300% 100%, 100% 100%;
+  background-position: 130% 0, 0 0;
 }
 
 /* Угловые марки карточки: только два угла по диагонали */
@@ -707,6 +814,9 @@ summary {
   background:
     linear-gradient(rgba(10, 12, 11, 0.96), rgba(10, 12, 11, 0.98)),
     url("assets/farm-herd.jpg") center / cover;
+  /* Панель скрыта атрибутом hidden, поэтому держим её в потоке
+     на время закрытия через discrete-переход display. */
+  transition: display 180ms allow-discrete;
 }
 
 .mobile-menu nav {
@@ -724,6 +834,23 @@ summary {
   font-family: var(--display);
   font-size: clamp(2rem, 10vw, 4.5rem);
   line-height: 1;
+  /* Закрытие: пункты уходят вниз разом и быстро. */
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 180ms ease-in;
+}
+
+/* Открытие: пункты вытираются снизу вверх, каждый следующий на 60 мс позже.
+   @starting-style даёт стартовое значение элементу, которого до этого
+   не было на экране; без поддержки меню просто открывается сразу. */
+.mobile-menu:not([hidden]) a {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 400ms var(--ease) calc(var(--i, 0) * 60ms);
+}
+
+@starting-style {
+  .mobile-menu:not([hidden]) a {
+    clip-path: inset(100% 0 0 0);
+  }
 }
 
 .hero {
@@ -769,6 +896,34 @@ summary {
   background:
     linear-gradient(90deg, rgba(8, 10, 9, 0.72) 0%, rgba(8, 10, 9, 0.56) 30%, rgba(8, 10, 9, 0.18) 49%, transparent 72%),
     linear-gradient(180deg, rgba(8, 10, 9, 0.42) 0%, transparent 19%, transparent 68%, #0a0c0b 100%);
+}
+
+/* Тёплое пятно света поверх затемнения. Само по себе почти не читается,
+   работает только когда очень медленно идёт поперёк кадра. soft-light
+   не осветляет тени, поэтому чёрный фон остаётся чёрным. */
+.hero-shade::after {
+  position: absolute;
+  inset: -30% -40%;
+  pointer-events: none;
+  content: "";
+  /* Единственное золото на сайте, которое намеренно не дышит вместе со
+     всеми: это свет по фотографии, а не украшение. Берёт --gold-fixed,
+     чтобы смена палитры до него всё-таки доходила. */
+  background: radial-gradient(ellipse 40% 60% at 50% 50%, rgba(197, 163, 106, 0.16), transparent 70%);
+  background: radial-gradient(ellipse 40% 60% at 50% 50%, color-mix(in srgb, var(--gold-fixed) 16%, transparent), transparent 70%);
+  mix-blend-mode: soft-light;
+}
+
+/* Плёночное зерно. Лежит выше фото и затемнения, но ниже шторки входа
+   (.hero::before, z-index 4). Запас 140px по кругу нужен под сдвиг. */
+.hero-grain {
+  position: absolute;
+  inset: -140px;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
 }
 
 .hero-content {
@@ -861,9 +1016,13 @@ summary {
   transform: translateX(4px);
 }
 
+/* Заливка кнопки намеренно не дышит. Это большое сплошное пятно, а не
+   хайрлайн: пульсирующий призыв к действию читается как реклама. Плюс
+   у .button висит transition на background под ховер, и он бы всё
+   равно смазал свечение в кашу. */
 .button-primary {
-  border-color: var(--gold);
-  background: var(--gold);
+  border-color: var(--gold-fixed);
+  background: var(--gold-fixed);
   color: #12140f;
 }
 
@@ -1469,9 +1628,32 @@ summary {
   transform: translateY(-50%) rotate(45deg);
 }
 
+/* Подтверждение открытия: под вопросом дорисовывается русский шов.
+   Маска и металл берутся из .seam--ru, здесь только геометрия и прорисовка. */
+.faq summary::before {
+  position: absolute;
+  right: 0;
+  bottom: 7px;
+  left: 0;
+  content: "";
+  height: 16px;
+  background: var(--orn-metal);
+  background-size: 300% 100%;
+  opacity: var(--orn-opacity);
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.4s ease;
+}
+
+.faq details[open] summary::before {
+  clip-path: inset(0 0 0 0);
+}
+
+/* Верхний отступ даёт шву воздух: без него линия липнет к ответу. */
 .faq details p {
   max-width: 560px;
-  margin: -4px 0 24px;
+  margin: 6px 0 24px;
   color: var(--smoke);
 }
 
@@ -1600,6 +1782,7 @@ summary {
 .site-author a {
   color: var(--ivory-muted);
   border-bottom: 1px solid rgba(197, 163, 106, 0.48);
+  border-bottom-color: color-mix(in srgb, var(--gold) 48%, transparent);
   transition: color 180ms ease, border-color 180ms ease;
 }
 
@@ -1845,6 +2028,36 @@ summary {
   filter: saturate(0.85) contrast(1.05) brightness(0.97);
 }
 
+/* Створки отвечают друг другу: активная идёт к шву, вторая уходит в тень.
+   Гасим слоем, а не фильтром: фильтр здесь несёт разницу температур. */
+@media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  .diptych-panel::after {
+    content: "";
+    grid-area: 1 / 1;
+    background: var(--ink);
+    opacity: 0;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+    transition: opacity 0.8s var(--ease);
+  }
+
+  .diptych:hover .diptych-panel:not(:hover)::after,
+  .diptych:has(.diptych-panel:focus-visible) .diptych-panel:not(:focus-visible)::after {
+    opacity: 0.28;
+  }
+
+  .diptych-panel--es:hover img,
+  .diptych-panel--es:focus-visible img {
+    transform: translateX(6px);
+  }
+
+  .diptych-panel--ru:hover img,
+  .diptych-panel--ru:focus-visible img {
+    transform: translateX(-6px);
+  }
+}
+
 .diptych-panel figcaption {
   display: grid;
   margin-top: clamp(22px, 2.4vw, 34px);
@@ -1887,7 +2100,10 @@ summary {
   position: relative;
   display: grid;
   min-height: min(62vh, 580px);
+  /* clip, а не hidden: набор цитаты идёт по скроллу страницы,
+     а контейнер прокрутки внутри секции сбил бы отсчёт */
   overflow: hidden;
+  overflow: clip;
   align-content: center;
 }
 
@@ -2007,6 +2223,7 @@ summary {
   width: 1px;
   content: "";
   background: linear-gradient(var(--line-gold), rgba(197, 163, 106, 0.08));
+  background: linear-gradient(var(--line-gold), color-mix(in srgb, var(--gold) 8%, transparent));
 }
 
 .lineage-node:last-child::before {
@@ -2021,6 +2238,16 @@ summary {
   height: 11px;
   border: 1px solid var(--gold);
   transform: rotate(45deg);
+}
+
+/* Слой заливки для вспышки в момент прихода линии. Базово погашен,
+   поэтому без JS и при reduced-motion ромб остаётся контурным. */
+.lineage-mark::after {
+  position: absolute;
+  inset: 1px;
+  content: "";
+  background: var(--gold);
+  opacity: 0;
 }
 
 .lineage-name {
@@ -2103,13 +2330,34 @@ summary {
 }
 
 .season-label {
+  position: relative;
   display: block;
   margin-bottom: 4px;
+  padding-left: 16px;
   color: var(--gold);
   font-family: var(--sans);
   font-size: 0.75rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
+}
+
+/* Отметка года: тусклая до прихода кадра, разгорается вместе с ним.
+   Тот же контурный ромб, что у родословной и списка комплектации. */
+.season-label::before {
+  position: absolute;
+  top: 0.42em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--gold);
+  content: "";
+  opacity: 0.4;
+  transform: rotate(45deg);
+  transition: opacity 0.7s var(--ease) 0.18s;
+}
+
+.season-frame.is-visible .season-label::before {
+  opacity: 1;
 }
 
 /* ============================================================
@@ -2130,11 +2378,23 @@ summary {
 .step {
   position: relative;
   padding-top: 30px;
-  border-top: 1px solid var(--line);
 }
 
+/* Линия шага — псевдоэлемент, а не border-top: border масштабировать нельзя */
+.step::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  content: "";
+  background: var(--line);
+}
+
+/* z-index: ромб рисуется после линии, иначе линия ложится поверх его заливки */
 .step::before {
   position: absolute;
+  z-index: 1;
   top: -4px;
   left: 0;
   width: 7px;
@@ -2317,7 +2577,59 @@ summary {
 
 @keyframes hero-scroll-depth {
   to {
-    transform: translateY(4vh) scale(1.025);
+    transform: translateY(7vh) scale(1.04);
+  }
+}
+
+/* Кадр дышит: очень медленно и по независимому свойству scale, потому что
+   transform у картинки занят входом hero-image-arrival. Старт с задержкой
+   2 s - вход длится 1.75 s, стыка не будет. */
+@keyframes hero-breath {
+  from {
+    scale: 1.035;
+  }
+
+  to {
+    scale: 1.075;
+  }
+}
+
+@keyframes hero-light-sweep {
+  from {
+    translate: -22% 0;
+  }
+
+  to {
+    translate: 22% 0;
+  }
+}
+
+/* Зерно шевелится сдвигом слоя, а не background-position: сдвиг композитор
+   делает без перерисовки всего первого экрана. Слой на 140px шире с каждой
+   стороны, поэтому край не открывается. */
+@keyframes hero-grain-shift {
+  0% {
+    translate: 0 0;
+  }
+
+  20% {
+    translate: -14px 8px;
+  }
+
+  40% {
+    translate: 11px -12px;
+  }
+
+  60% {
+    translate: -8px -6px;
+  }
+
+  80% {
+    translate: 13px 10px;
+  }
+
+  100% {
+    translate: -11px 4px;
   }
 }
 
@@ -2352,6 +2664,54 @@ summary {
   }
 }
 
+/* Главный кадр «Разведения» идёт вбок: секция про широкий ход, и
+   движение должно быть горизонтальным. Масштаба тут нет - кадр лежит
+   в потоке с подписью под ним, увеличение наехало бы на подпись,
+   поэтому уезжающие края гасит боковая маска. Амплитуда в --drift-x,
+   на узком экране она вдвое тише. */
+@keyframes media-drift-lateral {
+  from {
+    translate: calc(var(--drift-x, 2%) * -1) 0;
+  }
+
+  to {
+    translate: var(--drift-x, 2%) 0;
+  }
+}
+
+/* Ромб садится с перелётом: приход линии в узел читается как событие */
+@keyframes lineage-mark-seat {
+  from {
+    opacity: 0;
+    transform: rotate(45deg) scale(0.45);
+  }
+
+  62% {
+    opacity: 1;
+    transform: rotate(45deg) scale(1.14);
+  }
+
+  to {
+    opacity: 1;
+    transform: rotate(45deg) scale(1);
+  }
+}
+
+/* Заливка вспыхивает золотом и гаснет обратно в контур */
+@keyframes lineage-mark-strike {
+  from {
+    opacity: 0;
+  }
+
+  38% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
 @keyframes hero-copy-drift {
   to {
     opacity: 0.34;
@@ -2364,14 +2724,87 @@ summary {
     animation: hero-curtain-reveal 1.05s var(--ease) 0.08s both;
   }
 
+  /* Вход и дыхание живут одним списком: порознь второе правило затёрло бы
+     первое, animation - шорткат. Свойства у них разные, transform против
+     scale, поэтому вместе не конфликтуют. */
   .is-ready .hero-media img {
-    animation: hero-image-arrival 1.75s var(--ease) 0.08s both;
+    animation:
+      hero-image-arrival 1.75s var(--ease) 0.08s both,
+      hero-breath 26s ease-in-out 2s infinite alternate backwards;
+  }
+
+  .hero-shade::after {
+    animation: hero-light-sweep 40s ease-in-out infinite alternate;
+  }
+
+  .hero-grain {
+    animation: hero-grain-shift 0.72s steps(6) infinite;
+  }
+
+  /* Параллакс по курсору: три слоя с разной глубиной. Фото уходит от
+     курсора сильнее всех, текст идёт навстречу - так первый экран читается
+     как окно, а не как плоская картинка.
+
+     Сидит на translate, потому что transform у всех трёх занят скролл-
+     анимациями ниже. Сглаживание даёт сам transition, отдельный цикл
+     догонки не нужен.
+
+     Запас под сдвиг даёт scale 1.035 у кадра (hero-breath): картинка шире
+     своей обёртки, поэтому чёрный край не открывается. */
+  @media (hover: hover) and (pointer: fine) {
+    .hero-media,
+    .hero-shade,
+    .hero-content {
+      transition: translate 0.55s var(--ease);
+    }
+
+    .hero-media {
+      translate: calc(var(--mx, 0) * -8px) calc(var(--my, 0) * -6px);
+    }
+
+    .hero-shade {
+      translate: calc(var(--mx, 0) * -4px) calc(var(--my, 0) * -3px);
+    }
+
+    .hero-content {
+      translate: calc(var(--mx, 0) * 5px) calc(var(--my, 0) * 4px);
+    }
   }
 
   .reveal {
     opacity: 0;
     transform: translateY(18px);
     transition: opacity 0.58s var(--ease), transform 0.58s var(--ease);
+  }
+
+  /* Заголовок первого экрана вытирается двумя строками навстречу:
+     золотая слева направо, светлая справа налево - тот же шов, что
+     держит весь сайт. Общий .reveal здесь снимается, иначе строки
+     ещё и всплывали бы.
+
+     Старт 0.9 с: до этого над первым экраном стоит шторка
+     .hero::before, она уходит к 1.13 с. Вытирание раньше шло бы
+     под шторкой.
+
+     Поля клипа по вертикали отрицательные - line-height 0.94 короче
+     выносных элементов, ровный inset срезал бы хвост у «р». */
+  .hero-title.reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .hero-title span {
+    clip-path: inset(-0.2em 100% -0.2em -0.05em);
+    transition: clip-path 2.24s var(--ease) 0.9s;
+  }
+
+  .hero-title span:last-child {
+    clip-path: inset(-0.2em -0.05em -0.2em 100%);
+  }
+
+  .hero-title.is-visible span {
+    clip-path: inset(-0.2em -0.05em -0.2em -0.05em);
   }
 
   /* Кадр выезжает шторкой снизу вверх.
@@ -2413,6 +2846,61 @@ summary {
     transform: translateY(0);
   }
 
+  /* Цитата разрыва набирается по словам, а не приходит одним фейдом.
+     Общий .reveal здесь снимается: класс остаётся на месте, поэтому
+     без JS цитата всё равно видна. Слово проступает целиком, а не
+     вытирается по высоте: на середине хода срез разрезал бы буквы
+     пополам и читался как брак вёрстки, а не как набор. */
+  .break-quote.is-typeset {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .break-quote.is-typeset .quote-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(0.16em);
+    transition: opacity 2s var(--ease), transform 2s var(--ease);
+    transition-delay: calc(var(--i) * 120ms);
+  }
+
+  .break-quote.is-typeset.is-visible .quote-word {
+    opacity: 1;
+    transform: none;
+  }
+
+  @keyframes quote-word-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.16em);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Слова подбираются по ходу скролла: фраза про ожидание, поэтому
+     темп задаёт читатель, а не таймер. Таймлиния именованная и живёт
+     на самой цитате - иначе каждое слово считало бы свой прогресс
+     и вторая строка отставала бы от первой на высоту строки.
+     Где scroll-driven анимаций нет, остаётся набор по времени выше. */
+  @supports (animation-timeline: view()) {
+    .break-quote.is-typeset {
+      view-timeline: --break-quote block;
+    }
+
+    .break-quote.is-typeset .quote-word {
+      transition: none;
+      animation: quote-word-in linear both;
+      animation-timeline: --break-quote;
+      animation-range-start: cover calc(14% + var(--i) * 6%);
+      animation-range-end: cover calc(40% + var(--i) * 6%);
+    }
+  }
+
   /* Шов прорисовывается от центра к краям. Начальное состояние
      живёт здесь, а не в базовом правиле: если JS не отработает,
      орнамент останется видимым, а не исчезнет. */
@@ -2431,16 +2919,239 @@ summary {
     clip-path: inset(0 0 0 0);
   }
 
-  .hero .reveal:nth-child(2) {
-    transition-delay: 0.34s;
+  /* Общее свечение. Через сайт раз в --orn-glint-period проходит один
+     свет: золото наливается и остывает. Дышат сами токены, поэтому
+     буквы, римские цифры, ромбы, кромки фотографий и кнопки светлеют
+     одновременно и синхронны по построению, а не по совпадению
+     задержек. Пик на 20% круга.
+
+     Отдельных правил для контурных ромбов нет намеренно: они рисуются
+     бордюром из тех же токенов и загораются сами. */
+  @keyframes gold-breath {
+    0%,
+    45%,
+    100% {
+      --gold: var(--gold-fixed);
+      --gold-deep: var(--gold-deep-fixed);
+    }
+
+    /* На пике каждый оттенок поднимается на одну ступень палитры */
+    20% {
+      --gold: var(--gold-light);
+      --gold-deep: var(--gold-fixed);
+    }
+  }
+
+  :root {
+    animation: gold-breath var(--orn-glint-period) linear infinite;
+  }
+
+  /* Поверх общего свечения по кромке орнамента едет блик - свет по
+     металлу. Проход укладывается в первые 40% круга, поэтому середину
+     элемента блик пересекает там же, где пик свечения. Одна волна,
+     а не две независимые анимации. Задержек ни у кого нет: все швы
+     идут в один такт. */
+  @keyframes ornament-glint {
+    0% {
+      background-position: 130% 0;
+    }
+
+    40%,
+    100% {
+      background-position: -30% 0;
+    }
+  }
+
+  @keyframes ornament-glint-v {
+    0% {
+      background-position: 0 130%;
+    }
+
+    40%,
+    100% {
+      background-position: 0 -30%;
+    }
+  }
+
+  /* Хайрлайн номера секции: едет только верхний слой, нижний стоит */
+  @keyframes ornament-glint-line {
+    0% {
+      background-position: 130% 0, 0 0;
+    }
+
+    40%,
+    100% {
+      background-position: -30% 0, 0 0;
+    }
+  }
+
+  .seam::before,
+  .frieze {
+    animation: ornament-glint var(--orn-glint-period) linear infinite;
+  }
+
+  .seam-v::before {
+    animation: ornament-glint-v var(--orn-glint-period) linear infinite;
+  }
+
+  .section-number::after {
+    animation: ornament-glint-line var(--orn-glint-period) linear infinite;
+  }
+
+  /* Клеймение: удар подковы - причина расхождения шва, а не
+     параллельная анимация. Шов ждёт момент удара (0.6s) и только
+     тогда начинает расходиться. */
+  .seam--brand::before {
+    transition-delay: 0.6s;
+  }
+
+  .seam--brand::after {
+    opacity: 0;
+  }
+
+  .seam--brand.is-visible::after {
+    animation: brand-strike 2.2s forwards;
+  }
+
+  @keyframes brand-strike {
+    /* Клеймо подносят: ярко и крупнее места, куда ляжет */
+    0% {
+      background: var(--gold);
+      opacity: 0;
+      transform: scale(1.25);
+      animation-timing-function: linear;
+    }
+
+    12% {
+      background: var(--gold);
+      opacity: 1;
+      transform: scale(1.25);
+      animation-timing-function: cubic-bezier(0.85, 0, 0.15, 1);
+    }
+
+    /* Удар */
+    28% {
+      background: var(--gold);
+      opacity: 1;
+      transform: scale(1);
+      animation-timing-function: var(--ease);
+    }
+
+    /* Остывание */
+    82%,
+    100% {
+      background: var(--gold-deep);
+      opacity: 0.5;
+      transform: scale(1);
+    }
+  }
+
+  /* Родословная прошивается сверху вниз: линия растёт к следующему узлу,
+     ромб садится ровно тогда, когда линия до него дошла.
+
+     Стартовая пауза 0.3 с намеренная: общий наблюдатель ловит блок, едва
+     его верхний край показался снизу экрана, и без паузы прошивка успевает
+     отыграть, пока читатель ещё долистывает.
+
+     Ромб идёт анимацией, а не transition: перелёту масштаба нужны три
+     опорные точки. both удерживает последний кадр, поэтому базовый
+     rotate(45deg) сохраняется после проигрывания. */
+  .lineage-node::before {
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.5s var(--ease) 0.42s;
+  }
+
+  .lineage-mark {
+    opacity: 0;
+  }
+
+  .lineage-node:nth-child(2)::before {
+    transition-delay: 1.04s;
+  }
+
+  .lineage.is-visible .lineage-node::before {
+    transform: scaleY(1);
+  }
+
+  .lineage.is-visible .lineage-mark {
+    animation: lineage-mark-seat 0.46s var(--ease) 0.3s both;
+  }
+
+  .lineage.is-visible .lineage-mark::after {
+    animation: lineage-mark-strike 0.6s var(--ease) 0.3s both;
+  }
+
+  .lineage.is-visible .lineage-node:nth-child(2) .lineage-mark,
+  .lineage.is-visible .lineage-node:nth-child(2) .lineage-mark::after {
+    animation-delay: 0.92s;
+  }
+
+  .lineage.is-visible .lineage-node:nth-child(3) .lineage-mark,
+  .lineage.is-visible .lineage-node:nth-child(3) .lineage-mark::after {
+    animation-delay: 1.54s;
+  }
+
+  /* Хайрлайны прочерчиваются слева направо, ромб доворачивается */
+  .section-number::before,
+  .step::before {
+    transform: rotate(0deg);
+    transition: transform 0.7s var(--ease);
+  }
+
+  .section-number::after,
+  .step::after {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.7s var(--ease);
+  }
+
+  .section-number.is-visible::before,
+  .step.is-visible::before {
+    transform: rotate(45deg);
+  }
+
+  .section-number.is-visible::after,
+  .step.is-visible::after {
+    transform: scaleX(1);
+  }
+
+  /* Четыре шага иначе прочерчиваются одновременно */
+  .steps .step:nth-child(2),
+  .steps .step:nth-child(2)::before,
+  .steps .step:nth-child(2)::after {
+    transition-delay: 0.14s;
+  }
+
+  .steps .step:nth-child(3),
+  .steps .step:nth-child(3)::before,
+  .steps .step:nth-child(3)::after {
+    transition-delay: 0.28s;
+  }
+
+  .steps .step:nth-child(4),
+  .steps .step:nth-child(4)::before,
+  .steps .step:nth-child(4)::after {
+    transition-delay: 0.42s;
+  }
+
+  /* Копия и кнопки уехали за заголовок и укорочены до 0.5 с: обе
+     садятся ровно к концу вытирания, на 3.14 с. Дальше вход не
+     растягивается.
+
+     nth-child(2) - сам заголовок, он идёт клипом, а не transition,
+     и делей ему больше не нужен. */
+  .hero-copy.reveal,
+  .hero-cta.reveal {
+    transition-duration: 0.5s;
   }
 
   .hero .reveal:nth-child(3) {
-    transition-delay: 0.46s;
+    transition-delay: 2.54s;
   }
 
   .hero .reveal:nth-child(4) {
-    transition-delay: 0.58s;
+    transition-delay: 2.64s;
   }
 
   @supports (animation-timeline: scroll()) {
@@ -2492,6 +3203,23 @@ summary {
     .life-frame img,
     .season-frame img {
       animation: media-drift-masked linear both;
+      animation-timeline: view();
+    }
+
+    /* Только главный кадр раздела: парные вертикали лежат в .breeding-pair
+       и сюда не попадают. Вертикальная маска у кадра уже есть, боковая
+       добавляется вторым слоем, поэтому слои пересекаются, а не
+       складываются - иначе верх и низ перестали бы растворяться. */
+    .breeding-media > .breeding-shot img {
+      -webkit-mask-image:
+        linear-gradient(180deg, transparent 0, #000 7%, #000 93%, transparent 100%),
+        linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+      mask-image:
+        linear-gradient(180deg, transparent 0, #000 7%, #000 93%, transparent 100%),
+        linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+      -webkit-mask-composite: source-in;
+      mask-composite: intersect;
+      animation: media-drift-lateral linear both;
       animation-timeline: view();
     }
   }
@@ -2671,6 +3399,11 @@ summary {
     min-height: 0;
   }
 
+  /* Узкий экран: кадр шире колонки уже сам по себе, дрейф вдвое тише */
+  .breeding-media > .breeding-shot img {
+    --drift-x: 1%;
+  }
+
   .horse-track {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2794,6 +3527,11 @@ summary {
   .footer-meta {
     width: 100%;
     padding-inline: 18px;
+  }
+
+  /* На узком экране цитата стоит в четыре строки, набор укорачивается */
+  .break-quote.is-typeset .quote-word {
+    transition-delay: calc(var(--i) * 80ms);
   }
 
   .philosophy-grid,
@@ -2999,11 +3737,46 @@ summary {
   }
 
   .reveal,
-  .reveal-media {
+  .reveal-media,
+  .quote-word,
+  .mobile-menu a {
     opacity: 1 !important;
     transform: none !important;
     clip-path: none !important;
     transition-delay: 0s !important;
+  }
+
+  /* Шов под открытым вопросом просто есть, без прорисовки */
+  .faq summary::before {
+    transition: none !important;
+  }
+
+  /* Хайрлайны сразу на месте; ромбы держат базовый rotate(45deg) */
+  .section-number::after,
+  .step::after {
+    transform: none !important;
+    transition-delay: 0s !important;
+  }
+
+  /* Родословная стоит прошитой: линии на месте, ромбы видны, вспышки нет */
+  .lineage-node::before {
+    transform: none !important;
+    transition-delay: 0s !important;
+  }
+
+  .lineage-mark {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+
+  .lineage-mark::after {
+    display: none;
+  }
+
+  /* Отметки года стоят разгоревшимися */
+  .season-label::before {
+    opacity: 1 !important;
+    transition: none !important;
   }
 
   /* Дрейф выключен: свойства независимые, transform их не покрывает */
@@ -3011,7 +3784,8 @@ summary {
   .break-media img,
   .diptych-panel img,
   .life-frame img,
-  .season-frame img {
+  .season-frame img,
+  .breeding-media > .breeding-shot img {
     translate: none !important;
     scale: none !important;
   }

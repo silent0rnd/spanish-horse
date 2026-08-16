@@ -32,10 +32,38 @@ This file overrides the generic Liquid Glass result because it conflicts with th
 | `--ivory` | `#e8e6df` | primary text |
 | `--ivory-muted` | `#c7c5be` | body text |
 | `--smoke` | `#a8aaa4` | metadata |
-| `--gold` | `#c5a36a` | CTA and brand accent |
-| `--gold-deep` | `#9b7844` | lines and subdued ornament |
+| `--gold` | `#c5a36a` | CTA and brand accent, animated |
+| `--gold-deep` | `#9b7844` | lines and subdued ornament, animated |
+| `--gold-light` | `#e2c88f` | peak of the glow, one step up |
+| `--gold-fixed` | `#c5a36a` | gold that must not move |
+| `--gold-deep-fixed` | `#9b7844` | deep gold that must not move |
+| `--line-gold` | 42% of `--gold` | hairlines and frames |
 
 Normal body text must meet WCAG AA contrast. Do not use pure black, pure white, neon or multi-color accents.
+
+### Gold is animated. Never write it as a number.
+
+`--gold` and `--gold-deep` breathe: once every `--orn-glint-period` the whole
+page swells one step brighter and settles back, so every gold mark on screen
+catches the light at the same instant. The keyframe is `gold-breath` and it
+drives the tokens themselves, not a list of selectors.
+
+That only holds while new work reads the tokens. Rules:
+
+- Any new gold element takes its color from `var(--gold)`, `var(--gold-deep)`
+  or `var(--line-gold)`. It then joins the glow with no extra code.
+- Never hardcode `#c5a36a`, `#9b7844` or `rgba(197, 163, 106, …)` in a rule.
+  A hardcoded value drops out of the glow and reads as a dull patch next to
+  everything else.
+- For translucent gold use `color-mix(in srgb, var(--gold) N%, transparent)`,
+  not `rgba()` with numbers. Keep the old `rgba()` line directly above it as
+  a fallback for browsers without `color-mix`.
+- Use `--gold-fixed` only where movement would be a defect: the focus ring,
+  text selection, the filled primary button, and light cast over a photo.
+- Never add a second per-element glow animation. One light source, one
+  keyframe. Extra animations put elements out of step, which is the exact
+  thing this system exists to prevent.
+- Photos never carry the glow. Their gold frames do.
 
 ## Typography
 

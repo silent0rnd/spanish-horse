@@ -26,7 +26,9 @@
          должны остаться видимыми, а не ждать класса, который не придёт. -->
     <style>
       .reveal,
-      .reveal-media {
+      .reveal-media,
+      .quote-word,
+      .hero-title span {
         opacity: 1 !important;
         transform: none !important;
         clip-path: none !important;
@@ -40,6 +42,24 @@
       .seam::before,
       .seam-v::before {
         clip-path: none !important;
+      }
+
+      .section-number::after,
+      .step::after {
+        transform: none !important;
+      }
+
+      .section-number::before,
+      .step::before {
+        transform: rotate(45deg) !important;
+      }
+
+      .lineage-node::before {
+        transform: none !important;
+      }
+
+      .lineage-mark {
+        opacity: 1 !important;
       }
     </style>
   </noscript>
@@ -192,6 +212,7 @@
         </picture>
       </div>
       <div class="hero-shade" aria-hidden="true"></div>
+      <div class="hero-grain" aria-hidden="true"></div>
 
       <div class="hero-content page-shell">
         <p class="hero-kicker reveal">Pura Raza Española</p>
@@ -218,7 +239,7 @@
       </div>
 
       <div class="diptych">
-        <figure class="diptych-panel diptych-panel--es reveal-media">
+        <figure class="diptych-panel diptych-panel--es reveal-media" tabindex="0">
           <img src="assets/two-lands-andalusia.webp" alt="Сухая андалузская равнина с пробковыми дубами на рассвете" width="1122" height="1402">
           <figcaption>
             <span class="diptych-place">Андалусия</span>
@@ -228,7 +249,7 @@
 
         <div class="seam-v reveal" aria-hidden="true"></div>
 
-        <figure class="diptych-panel diptych-panel--ru reveal-media">
+        <figure class="diptych-panel diptych-panel--ru reveal-media" tabindex="0">
           <img src="assets/two-lands-russia.webp" alt="Берёзовая опушка и туманное поле в Тульской области" width="1122" height="1402">
           <figcaption>
             <span class="diptych-place">Тульская область</span>
@@ -491,7 +512,7 @@
     </section>
 
     <section class="buying section" id="buying" aria-labelledby="buying-title">
-      <div class="seam seam--ru seam--wide reveal" aria-hidden="true"></div>
+      <div class="seam seam--ru seam--wide seam--brand reveal" aria-hidden="true"></div>
 
       <div class="page-shell section-heading">
         <p class="section-number reveal"><span>VI</span></p>
