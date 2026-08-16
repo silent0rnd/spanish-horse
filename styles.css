@@ -570,7 +570,7 @@ summary {
 .desktop-nav a {
   position: relative;
   color: rgba(232, 230, 223, 0.72);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   letter-spacing: 0.13em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -1065,14 +1065,14 @@ summary {
 
 .horse-status {
   color: var(--gold);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .horse-price {
   color: var(--smoke);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   letter-spacing: 0.06em;
 }
 
@@ -1362,7 +1362,7 @@ summary {
 .field-error {
   min-height: 18px;
   color: #efb5a6;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
 }
 
 .form-hint {
@@ -1576,7 +1576,7 @@ summary {
   align-items: flex-end;
   border-bottom: 1px solid var(--line-gold);
   color: var(--gold);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -1645,7 +1645,7 @@ summary {
   border-bottom: 1px solid var(--line);
   background: rgba(10, 12, 11, 0.94);
   color: var(--gold);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   letter-spacing: 0.1em;
   text-align: right;
   text-transform: uppercase;
@@ -1701,7 +1701,7 @@ summary {
 
 .dialog-status {
   color: var(--gold);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -1784,7 +1784,7 @@ summary {
   z-index: 3;
   content: "Кадр готовится";
   color: var(--smoke);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   letter-spacing: 0.22em;
   text-align: center;
   text-transform: uppercase;
@@ -2107,7 +2107,7 @@ summary {
   margin-bottom: 4px;
   color: var(--gold);
   font-family: var(--sans);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
 }
@@ -2286,7 +2286,7 @@ summary {
 
 .dialog-specs dt {
   color: var(--smoke);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -2504,10 +2504,6 @@ summary {
 
   .desktop-nav {
     gap: 22px;
-  }
-
-  .desktop-nav a {
-    font-size: 0.74rem;
   }
 
   .philosophy-grid {
