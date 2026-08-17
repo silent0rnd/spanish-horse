@@ -64,16 +64,34 @@ That only holds while new work reads the tokens. Rules:
   and peaks at 20% of the cycle, the same phase as `gold-breath`. Use it for
   amplitude, never for a different rhythm. The rule guards against elements
   drifting out of step, which is the exact thing this system exists to
-  prevent. `hero-cross-beacon` and `included-mark-beacon` are the examples in
-  the codebase. Use amplitude only where a travelling glint is impossible —
-  `included-mark-beacon` exists because the horseshoe is drawn by `<use>` from
-  the sprite and has no surface to sweep.
+  prevent. `hero-cross-beacon`, `included-mark-beacon` and `ornament-swell` are
+  the three examples in the codebase. Use amplitude only where a travelling
+  glint is impossible or not enough on its own — `included-mark-beacon` exists
+  because the horseshoe is drawn by `<use>` from the sprite and has no surface
+  to sweep; `ornament-swell` exists because seams and the frieze rest at low
+  opacity, and that opacity was eating half the glint. It reads `--orn-opacity`
+  off the element, so one keyframe serves every muted ornament: give the
+  element its own `--orn-opacity` instead of a bare `opacity` number.
 - The travelling glint on top of the breath is carried by seams, the frieze,
   section-number hairlines, the buying steps (hairline and roman numeral) and
   the "what the buyer gets" list. All of them run `ornament-glint` or
   `ornament-glint-line` on the shared period with no delay. A new ornament
   either joins one of those selector lists or stays on breath alone; it never
   gets its own period.
+- Breath alone is not visible enough on the dark ground. Diamonds, roman
+  numerals and hairlines therefore carry a flare on top of it: `orn-flare-mark`,
+  `orn-flare-text` and `orn-flare-glow` push them to `--gold-glint` and raise a
+  soft halo at the 20% peak, then let them settle. The halo is a `box-shadow` /
+  `text-shadow` whose radius grows from zero — the color never interpolates to
+  transparent, and no filter or extra layer is created. Each element declares
+  its own resting tone with `--flare-rest`, so one keyframe serves the deep
+  diamonds and the brighter ones alike.
+- The light itself is `--gold-glint`, a warm near-white. It is the core of
+  every glint: the middle stop of `--orn-metal` / `--orn-metal-v` and of
+  `--orn-glint-band`, the one band shape shared by every hairline. It does not
+  breathe — it is light, not ornament. Tune the strength of the glint across
+  the whole site there and nowhere else. One palette step (`--gold-light`) was
+  the earlier value and was too faint to notice on the dark ground.
 - Photos never carry the glow. Their gold frames do — and light painted over
   a photo, such as the cross on the church, is a separate overlay layer.
 

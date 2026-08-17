@@ -99,13 +99,26 @@
   --gold-light: #e2c88f;
   --orn-glint-period: 4.5s;
 
+  /* Ядро блика. Это сам свет, а не украшение: он не дышит и стоит ровно,
+     как --gold-fixed. Одна ступень палитры (--gold-light) на тёмном фоне
+     читалась почти никак, тем более под --orn-opacity. Яркость всего
+     блика на сайте правится здесь. */
+  --gold-glint: #fff2da;
+
+  /* Свет вокруг орнамента на вспышке. Первая строка - запасная для
+     браузеров без color-mix. */
+  --orn-flare: rgba(255, 242, 218, 0.5);
+  --orn-flare: color-mix(in srgb, var(--gold-glint) 50%, transparent);
+
   /* Кромка золота: перелив вместо ровной краски. Одна форма на все
-     орнаменты, поэтому блик у всех читается как один и тот же металл. */
+     орнаменты, поэтому блик у всех читается как один и тот же металл.
+     Плечи остаются на --gold-deep - шов читается как металл, а не как
+     светящаяся полоса. */
   --orn-metal: linear-gradient(
     90deg,
     var(--gold-deep) 0 30%,
     var(--gold) 40%,
-    var(--gold-light) 46%,
+    var(--gold-glint) 46%,
     var(--gold) 52%,
     var(--gold-deep) 62% 100%
   );
@@ -113,9 +126,31 @@
     180deg,
     var(--gold-deep) 0 30%,
     var(--gold) 40%,
-    var(--gold-light) 46%,
+    var(--gold-glint) 46%,
     var(--gold) 52%,
     var(--gold-deep) 62% 100%
+  );
+
+  /* Полоса блика для хайрлайнов: одна форма на все тонкие линии и на
+     римскую цифру шага. Была втрое уже и без плеч - свет успевал пройти
+     раньше, чем глаз его ловил.
+
+     Первая строка - запасная для браузеров без color-mix. */
+  --orn-glint-band: linear-gradient(
+    90deg,
+    transparent 30%,
+    rgba(226, 200, 143, 0.55) 40%,
+    var(--gold-glint) 47%,
+    rgba(226, 200, 143, 0.55) 54%,
+    transparent 64%
+  );
+  --orn-glint-band: linear-gradient(
+    90deg,
+    transparent 30%,
+    color-mix(in srgb, var(--gold-light) 55%, transparent) 40%,
+    var(--gold-glint) 47%,
+    color-mix(in srgb, var(--gold-light) 55%, transparent) 54%,
+    transparent 64%
   );
 }
 
@@ -440,13 +475,18 @@ summary {
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='64'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M8 0V5M8 19V64'/%3E%3Cpath d='M8 5L14 12L8 19L2 12Z'/%3E%3Cpath d='M4 32H12M5 40H11M4 48H12M5 56H11'/%3E%3C/g%3E%3Ccircle cx='8' cy='12' r='1.5' fill='%23000'/%3E%3C/svg%3E");
 }
 
-/* Фриз: зубец северной причелины, для кромки футера */
+/* Фриз: зубец северной причелины, для кромки футера.
+
+   Своя прозрачность задана через --orn-opacity, а не числом в opacity:
+   так её читает ornament-swell и поднимает фриз на проходе блика. */
 .frieze {
+  --orn-opacity: 0.36;
+
   width: 100%;
   height: 22px;
   background: var(--orn-metal);
   background-size: 300% 100%;
-  opacity: 0.36;
+  opacity: var(--orn-opacity);
   -webkit-mask-repeat: repeat-x;
   mask-repeat: repeat-x;
   -webkit-mask-size: 48px 22px;
@@ -509,7 +549,7 @@ summary {
      Одним слоем нельзя - его собственное затухание вправо уехало бы
      вместе с бликом. */
   background:
-    linear-gradient(90deg, transparent 40%, var(--gold-light) 47%, transparent 54%),
+    var(--orn-glint-band),
     linear-gradient(90deg, var(--line-gold), transparent);
   background-size: 300% 100%, 100% 100%;
   background-position: 130% 0, 0 0;
@@ -2533,7 +2573,7 @@ summary {
   height: 1px;
   content: "";
   background:
-    linear-gradient(90deg, transparent 40%, var(--gold-light) 47%, transparent 54%),
+    var(--orn-glint-band),
     linear-gradient(var(--line-gold), var(--line-gold));
   background-size: 300% 100%, 100% 100%;
   background-position: 130% 0, 0 0;
@@ -2561,28 +2601,6 @@ summary {
   font-size: 1.45rem;
   letter-spacing: 0.04em;
   line-height: 1;
-}
-
-/* По цифре проходит тот же блик, что и по хайрлайнам. Слои те же два:
-   сверху едет светлая полоса, снизу лежит ровное --gold - тот самый цвет,
-   каким цифра была до блика, поэтому в покое она не темнеет.
-
-   --orn-metal здесь не годится: он уходит в --gold-deep, и цифру
-   большую часть круга держало бы тусклой.
-
-   @supports обязателен: без background-clip заливка станет фоном строки,
-   а прозрачный текст пропадёт совсем. */
-@supports (background-clip: text) or (-webkit-background-clip: text) {
-  .step-num {
-    background:
-      linear-gradient(90deg, transparent 40%, var(--gold-light) 47%, transparent 54%),
-      linear-gradient(var(--gold), var(--gold));
-    background-size: 300% 100%, 100% 100%;
-    background-position: 130% 0, 0 0;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
 }
 
 .step h3 {
@@ -2666,7 +2684,7 @@ summary {
   left: 0;
   height: 1px;
   content: "";
-  background: linear-gradient(90deg, transparent 40%, var(--gold-light) 47%, transparent 54%);
+  background: var(--orn-glint-band);
   background-size: 300% 100%;
   background-position: 130% 0;
 }
@@ -3209,20 +3227,128 @@ summary {
     }
   }
 
-  .seam::before,
-  .frieze,
-  .included-list li::after {
-    animation: ornament-glint var(--orn-glint-period) linear infinite;
+  /* Швы и фриз лежат приглушёнными, и половину прироста яркости съедала
+     их же прозрачность. На проходе блика она поднимается.
+
+     Keyframe читает --orn-opacity у самого элемента, поэтому одного
+     хватает на всех: шов 0.5 -> 0.95, фриз 0.36 -> 0.68. Пик на 20%
+     круга - там же, где пик gold-breath. */
+  @keyframes ornament-swell {
+    0%,
+    45%,
+    100% {
+      opacity: var(--orn-opacity);
+    }
+
+    20% {
+      opacity: min(1, calc(var(--orn-opacity) * 1.9));
+    }
+  }
+
+  .seam::before {
+    animation:
+      ornament-glint var(--orn-glint-period) linear infinite,
+      ornament-swell var(--orn-glint-period) linear infinite;
   }
 
   .seam-v::before {
-    animation: ornament-glint-v var(--orn-glint-period) linear infinite;
+    animation:
+      ornament-glint-v var(--orn-glint-period) linear infinite,
+      ornament-swell var(--orn-glint-period) linear infinite;
+  }
+
+  .frieze {
+    animation:
+      ornament-glint var(--orn-glint-period) linear infinite,
+      ornament-swell var(--orn-glint-period) linear infinite;
   }
 
   .section-number::after,
-  .step::after,
+  .step::after {
+    animation:
+      ornament-glint-line var(--orn-glint-period) linear infinite,
+      orn-flare-glow var(--orn-glint-period) linear infinite;
+  }
+
+  /* ВСПЫШКА ОРНАМЕНТА.
+
+     Одного дыхания токенов мало: перепад --gold -> --gold-light на тёмном
+     фоне надо высматривать. Поэтому ромбы, цифры и линии получают свою
+     амплитуду - раз в круг они коротко разгораются почти добела и вокруг
+     них проступает свет.
+
+     Пик на 20% круга, период общий: вспышка идёт той же волной, что и
+     дыхание золота, и тем же фронтом, что и блик по швам.
+
+     Цвет покоя у каждого свой, поэтому keyframe читает --flare-rest с
+     самого элемента: у ромба секции он глубокий, у ромба шага светлее.
+
+     Свет даётся тенью, а не размытием: тень рисуется без создания нового
+     слоя и не трогает соседей. Радиус меняется от нуля, цвет один и тот
+     же - интерполировать цвет в прозрачность не нужно. */
+  @keyframes orn-flare-mark {
+    0%,
+    45%,
+    100% {
+      border-color: var(--flare-rest, var(--gold-fixed));
+      box-shadow: 0 0 0 0 var(--orn-flare);
+    }
+
+    20% {
+      border-color: var(--gold-glint);
+      box-shadow: 0 0 8px 1px var(--orn-flare);
+    }
+  }
+
+  @keyframes orn-flare-text {
+    0%,
+    45%,
+    100% {
+      color: var(--flare-rest, var(--gold-fixed));
+      text-shadow: 0 0 0 var(--orn-flare);
+    }
+
+    20% {
+      color: var(--gold-glint);
+      text-shadow: 0 0 14px var(--orn-flare);
+    }
+  }
+
+  @keyframes orn-flare-glow {
+    0%,
+    45%,
+    100% {
+      box-shadow: 0 0 0 0 var(--orn-flare);
+    }
+
+    20% {
+      box-shadow: 0 0 9px 0 var(--orn-flare);
+    }
+  }
+
+  /* Ромбы */
+  .section-number::before,
+  .step::before,
+  .included-list li::before {
+    animation: orn-flare-mark var(--orn-glint-period) linear infinite;
+  }
+
+  .section-number::before,
+  .included-list li::before {
+    --flare-rest: var(--gold-deep-fixed);
+  }
+
+  /* Римские цифры */
+  .section-number span,
   .step-num {
-    animation: ornament-glint-line var(--orn-glint-period) linear infinite;
+    animation: orn-flare-text var(--orn-glint-period) linear infinite;
+  }
+
+  /* Линия под пунктом списка: блик уже едет, вспышка добавляет свет */
+  .included-list li::after {
+    animation:
+      ornament-glint var(--orn-glint-period) linear infinite,
+      orn-flare-glow var(--orn-glint-period) linear infinite;
   }
 
   /* Подкова рисуется <use> из спрайта, подложить маску под блик нечем.
