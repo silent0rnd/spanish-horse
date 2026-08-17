@@ -871,9 +871,12 @@ summary {
   background: var(--ink);
 }
 
+/* container-type нужен свету на кресте: он считает обрезку cover через
+   cqw/cqh, а те берутся только от контейнера. */
 .hero-media {
   position: absolute;
   inset: 0;
+  container-type: size;
   background: var(--ink);
 }
 
@@ -883,11 +886,105 @@ summary {
   height: 100%;
 }
 
+/* Обрезка сдвинута вправо (было center): на окнах уже 16:9 правый край
+   срезался и церковь с крестом уходила из кадра совсем. На 1920x1080
+   обрезки нет вовсе, там сдвиг ничего не меняет. --pos-x у .hero-cross
+   обязан повторять это число, иначе свет сядет мимо креста. */
 .hero-media img {
   object-fit: cover;
-  object-position: center;
-  filter: saturate(0.82) contrast(1.03) brightness(0.94);
+  object-position: 96% center;
+  filter: saturate(0.82) contrast(1.03) brightness(1);
   transform-origin: 68% center;
+}
+
+/* КРЕСТ НА КУПОЛЕ.
+
+   На фотографии храм испанский, и крест у него с одной перекладиной -
+   подсветить русский восьмиконечный там нечего. Поэтому он рисуется
+   поверх кадра: знак вдвое крупнее фотографического (в оригинале 20
+   точек кадра, в таком размере три перекладины слиплись бы) и тонкий
+   ореол по его росту. Ореол заодно гасит старый крест под ним - тот
+   темнее неба всего на несколько уровней.
+
+   Слой повторяет геометрию фотографии дважды:
+   - .hero-cross-frame воспроизводит обрезку cover, поэтому знак привязан
+     к точке кадра, а не к точке экрана, и держится при любых пропорциях
+     окна;
+   - сам .hero-cross несёт те же анимации и ту же transform-origin, что и
+     картинка, поэтому при въезде и дыхании крест не уползает с купола.
+   Сдвиги .hero-media (скролл, параллакс по курсору) достаются ему даром:
+   он её ребёнок.
+
+   Цвет берётся из токенов, поэтому крест разгорается в один такт с
+   римскими цифрами, ромбами и всеми остальными украшениями сайта. */
+.hero-cross {
+  --img-ar: 1.7768; /* 1672 / 941 */
+  --pos-x: 0.96; /* object-position по X, долей */
+  --cross-x: 95.873%; /* ось креста в кадре */
+  --cross-base: 39.745%; /* подошва: верх шпиля */
+  --cross-w: 1.316%; /* 22 точки кадра */
+  --cross-h: 4.251%; /* 40 точек кадра */
+  --cover-w: max(100cqw, calc(100cqh * var(--img-ar)));
+  --cover-h: max(100cqh, calc(100cqw / var(--img-ar)));
+
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform-origin: 68% center;
+
+  /* screen только добавляет свет и никогда не затемняет: ночное небо
+     под крестом остаётся небом. */
+  mix-blend-mode: screen;
+}
+
+/* Без контейнерных единиц посадку не вычислить, поэтому там крест просто
+   не появляется - лучше, чем знак мимо купола. */
+@supports (container-type: size) {
+  .hero-cross-frame {
+    position: absolute;
+    top: calc((100cqh - var(--cover-h)) * 0.5);
+    left: calc((100cqw - var(--cover-w)) * var(--pos-x));
+    width: var(--cover-w);
+    height: var(--cover-h);
+  }
+
+  /* Ореол ростом с сам крест, не больше: пятно во весь купол читалось бы
+     как маяк, а не как свет на металле. */
+  .hero-cross-frame::before {
+    position: absolute;
+    top: calc(var(--cross-base) - var(--cross-h) / 2);
+    left: var(--cross-x);
+    width: calc(var(--cross-w) * 3);
+    height: calc(var(--cross-h) * 2.2);
+    content: "";
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--gold) 34%, transparent),
+      transparent 72%
+    );
+  }
+
+  /* Знак рисуется маской, как весь орнамент сайта: заливка приходит из
+     токена и дышит вместе с ним. Нижняя перекладина косая, левым концом
+     вверх - это канон, а не украшение. Единицы viewBox равны точкам
+     кадра, поэтому правки сверяются с измерениями фотографии. */
+  .hero-cross-frame::after {
+    position: absolute;
+    top: var(--cross-base);
+    left: var(--cross-x);
+    width: var(--cross-w);
+    height: var(--cross-h);
+    content: "";
+    transform: translate(-50%, -100%);
+    background: var(--gold);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 40'%3E%3Cg fill='%23000'%3E%3Cpath d='M9.75 0H12.25V40H9.75Z'/%3E%3Cpath d='M5.5 6H16.5V8.5H5.5Z'/%3E%3Cpath d='M0 16H22V19H0Z'/%3E%3Cpath d='M3.5 28.25L18.5 32.25V34.75L3.5 30.75Z'/%3E%3C/g%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 40'%3E%3Cg fill='%23000'%3E%3Cpath d='M9.75 0H12.25V40H9.75Z'/%3E%3Cpath d='M5.5 6H16.5V8.5H5.5Z'/%3E%3Cpath d='M0 16H22V19H0Z'/%3E%3Cpath d='M3.5 28.25L18.5 32.25V34.75L3.5 30.75Z'/%3E%3C/g%3E%3C/svg%3E");
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+  }
 }
 
 .hero-shade {
@@ -898,20 +995,64 @@ summary {
     linear-gradient(180deg, rgba(8, 10, 9, 0.42) 0%, transparent 19%, transparent 68%, #0a0c0b 100%);
 }
 
-/* Тёплое пятно света поверх затемнения. Само по себе почти не читается,
-   работает только когда очень медленно идёт поперёк кадра. soft-light
-   не осветляет тени, поэтому чёрный фон остаётся чёрным. */
-.hero-shade::after {
+/* Свет с неба. На фотографии справа сверху есть просвет в облаках -
+   примерно 88% по ширине и 12% по высоте. Оттуда лучи и расходятся вниз-
+   влево, на голову и шею.
+
+   conic-gradient с центром ровно в этой точке даёт настоящий веер: лучи
+   сходятся в источнике, а не идут параллельно. Веер занимает 60 градусов
+   от 192deg - это и есть направление на голову.
+
+   Ширина и яркость лучей разные, шаг между ними неровный: ровный шаг
+   читался бы как решётка, а не как свет.
+
+   mix-blend-mode: screen, а не soft-light. soft-light тёмное не
+   осветляет, от него кадр только уходил в сепию.
+
+   Цвет не берёт золотые токены: это дневной свет, а не украшение. */
+.hero-rays {
+  --ray: 255, 243, 222;
+
   position: absolute;
-  inset: -30% -40%;
+  /* Запас 40px по кругу: без него blur сделал бы тёмную кромку по краю
+     кадра, а поворот открыл бы угол. */
+  inset: -40px;
+  z-index: 1;
   pointer-events: none;
+  background: conic-gradient(
+    from 205deg at 88% 12%,
+    transparent 0deg,
+    rgba(var(--ray), 0.14) 3deg,
+    transparent 7deg,
+    transparent 10deg,
+    rgba(var(--ray), 0.3) 13deg,
+    transparent 18deg,
+    transparent 21deg,
+    rgba(var(--ray), 0.2) 24deg,
+    transparent 29deg,
+    transparent 33deg,
+    rgba(var(--ray), 0.26) 36deg,
+    transparent 41deg,
+    transparent 44deg,
+    rgba(var(--ray), 0.12) 47deg,
+    transparent 51deg,
+    transparent 360deg
+  );
+  /* Гасит лучи по мере удаления от источника: в левую треть, где стоит
+     заголовок, свет не доходит. */
+  -webkit-mask-image: radial-gradient(ellipse 72% 88% at 88% 12%, #000 0%, rgba(0, 0, 0, 0.58) 36%, transparent 70%);
+  mask-image: radial-gradient(ellipse 72% 88% at 88% 12%, #000 0%, rgba(0, 0, 0, 0.58) 36%, transparent 70%);
+  /* Снимает полосы конического градиента */
+  filter: blur(9px);
+  mix-blend-mode: screen;
+}
+
+/* Горячее пятно у самого просвета в облаках */
+.hero-rays::after {
+  position: absolute;
+  inset: 0;
   content: "";
-  /* Единственное золото на сайте, которое намеренно не дышит вместе со
-     всеми: это свет по фотографии, а не украшение. Берёт --gold-fixed,
-     чтобы смена палитры до него всё-таки доходила. */
-  background: radial-gradient(ellipse 40% 60% at 50% 50%, rgba(197, 163, 106, 0.16), transparent 70%);
-  background: radial-gradient(ellipse 40% 60% at 50% 50%, color-mix(in srgb, var(--gold-fixed) 16%, transparent), transparent 70%);
-  mix-blend-mode: soft-light;
+  background: radial-gradient(ellipse 26% 22% at 88% 12%, rgba(var(--ray), 0.4), transparent 70%);
 }
 
 /* Плёночное зерно. Лежит выше фото и затемнения, но ниже шторки входа
@@ -2380,7 +2521,10 @@ summary {
   padding-top: 30px;
 }
 
-/* Линия шага — псевдоэлемент, а не border-top: border масштабировать нельзя */
+/* Линия шага — псевдоэлемент, а не border-top: border масштабировать нельзя.
+
+   Два слоя, как у хайрлайна номера секции: сверху едет блик, снизу лежит
+   сам хайрлайн. Он выведен из --gold, поэтому дышит вместе со страницей. */
 .step::after {
   position: absolute;
   top: 0;
@@ -2388,7 +2532,11 @@ summary {
   width: 100%;
   height: 1px;
   content: "";
-  background: var(--line);
+  background:
+    linear-gradient(90deg, transparent 40%, var(--gold-light) 47%, transparent 54%),
+    linear-gradient(var(--line-gold), var(--line-gold));
+  background-size: 300% 100%, 100% 100%;
+  background-position: 130% 0, 0 0;
 }
 
 /* z-index: ромб рисуется после линии, иначе линия ложится поверх его заливки */
@@ -2413,6 +2561,28 @@ summary {
   font-size: 1.45rem;
   letter-spacing: 0.04em;
   line-height: 1;
+}
+
+/* По цифре проходит тот же блик, что и по хайрлайнам. Слои те же два:
+   сверху едет светлая полоса, снизу лежит ровное --gold - тот самый цвет,
+   каким цифра была до блика, поэтому в покое она не темнеет.
+
+   --orn-metal здесь не годится: он уходит в --gold-deep, и цифру
+   большую часть круга держало бы тусклой.
+
+   @supports обязателен: без background-clip заливка станет фоном строки,
+   а прозрачный текст пропадёт совсем. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .step-num {
+    background:
+      linear-gradient(90deg, transparent 40%, var(--gold-light) 47%, transparent 54%),
+      linear-gradient(var(--gold), var(--gold));
+    background-size: 300% 100%, 100% 100%;
+    background-position: 130% 0, 0 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 
 .step h3 {
@@ -2482,9 +2652,23 @@ summary {
 .included-list li {
   position: relative;
   padding: 18px 0 18px 26px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--line-gold);
   color: var(--ivory-muted);
   font-size: 0.96rem;
+}
+
+/* Только блик. Нижний слой не нужен - под ним лежит сам border, поэтому
+   высота строки от этого псевдоэлемента не зависит. */
+.included-list li::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, transparent 40%, var(--gold-light) 47%, transparent 54%);
+  background-size: 300% 100%;
+  background-position: 130% 0;
 }
 
 .included-list li::before {
@@ -2586,21 +2770,34 @@ summary {
    2 s - вход длится 1.75 s, стыка не будет. */
 @keyframes hero-breath {
   from {
-    scale: 1.035;
+    scale: 1.03;
   }
 
   to {
-    scale: 1.075;
+    scale: 1.11;
   }
 }
 
-@keyframes hero-light-sweep {
+/* Лучи ходят и разгораются на разных периодах, 19 s и 13 s. Числа не
+   кратны, поэтому рисунок не повторяется - так идут облака мимо солнца.
+   Поворот вокруг самого просвета: лучи качаются, точка выхода стоит. */
+@keyframes hero-rays-swing {
   from {
-    translate: -22% 0;
+    rotate: -2.5deg;
   }
 
   to {
-    translate: 22% 0;
+    rotate: 2.5deg;
+  }
+}
+
+@keyframes hero-rays-pulse {
+  from {
+    opacity: 0.72;
+  }
+
+  to {
+    opacity: 1;
   }
 }
 
@@ -2733,8 +2930,35 @@ summary {
       hero-breath 26s ease-in-out 2s infinite alternate backwards;
   }
 
-  .hero-shade::after {
-    animation: hero-light-sweep 40s ease-in-out infinite alternate;
+  /* Первые две анимации скопированы у кадра слово в слово - это и есть
+     слежение: свет проходит ровно ту же геометрию, что и фотография, и
+     потому никогда не съезжает с креста. Третья - амплитуда маяка. */
+  .is-ready .hero-cross {
+    animation:
+      hero-image-arrival 1.75s var(--ease) 0.08s both,
+      hero-breath 26s ease-in-out 2s infinite alternate backwards,
+      hero-cross-beacon var(--orn-glint-period) linear infinite;
+  }
+
+  /* Пик на 20% круга - там же, где пик gold-breath. Маяк разгорается в
+     одной фазе с остальными украшениями, а не сам по себе. */
+  @keyframes hero-cross-beacon {
+    0%,
+    45%,
+    100% {
+      opacity: 0.7;
+    }
+
+    20% {
+      opacity: 1;
+    }
+  }
+
+  .hero-rays {
+    transform-origin: 88% 12%;
+    animation:
+      hero-rays-swing 19s ease-in-out infinite alternate,
+      hero-rays-pulse 13s ease-in-out infinite alternate;
   }
 
   .hero-grain {
@@ -2767,7 +2991,7 @@ summary {
     }
 
     .hero-content {
-      translate: calc(var(--mx, 0) * 5px) calc(var(--my, 0) * 4px);
+      translate: calc(var(--mx, 0) * 3px) calc(var(--my, 0) * 2px);
     }
   }
 
@@ -2973,7 +3197,7 @@ summary {
     }
   }
 
-  /* Хайрлайн номера секции: едет только верхний слой, нижний стоит */
+  /* Двухслойные хайрлайны: едет только верхний слой, нижний стоит */
   @keyframes ornament-glint-line {
     0% {
       background-position: 130% 0, 0 0;
@@ -2986,7 +3210,8 @@ summary {
   }
 
   .seam::before,
-  .frieze {
+  .frieze,
+  .included-list li::after {
     animation: ornament-glint var(--orn-glint-period) linear infinite;
   }
 
@@ -2994,8 +3219,29 @@ summary {
     animation: ornament-glint-v var(--orn-glint-period) linear infinite;
   }
 
-  .section-number::after {
+  .section-number::after,
+  .step::after,
+  .step-num {
     animation: ornament-glint-line var(--orn-glint-period) linear infinite;
+  }
+
+  /* Подкова рисуется <use> из спрайта, подложить маску под блик нечем.
+     Поэтому амплитуда, как у hero-cross-beacon: тот же период, пик на
+     20% круга - в одной фазе с gold-breath. */
+  @keyframes included-mark-beacon {
+    0%,
+    45%,
+    100% {
+      opacity: 0.82;
+    }
+
+    20% {
+      opacity: 1;
+    }
+  }
+
+  .included-mark {
+    animation: included-mark-beacon var(--orn-glint-period) linear infinite;
   }
 
   /* Клеймение: удар подковы - причина расхождения шва, а не
@@ -3289,9 +3535,16 @@ summary {
     inset: 0;
   }
 
+  /* Здесь обрезку не сдвигаем: кадр широкий, окно узкое, и ради церкви
+     пришлось бы отрезать голову лошади. Крест в кадр не попадает, свет
+     вместе с ним уходит за край - расхождения не будет. */
   .hero-media img {
     object-position: 72% center;
-    filter: saturate(0.76) brightness(0.86);
+    filter: saturate(0.76) brightness(0.92);
+  }
+
+  .hero-cross {
+    --pos-x: 0.72;
   }
 
   .hero-shade {
@@ -3515,6 +3768,16 @@ summary {
   .hero-media img {
     object-fit: cover;
     object-position: 62% center;
+  }
+
+  /* Мобильный кадр - другой файл, другие пропорции и своё место креста */
+  .hero-cross {
+    --img-ar: 0.5628; /* 941 / 1672 */
+    --pos-x: 0.62;
+    --cross-x: 88.204%;
+    --cross-base: 9.27%; /* подошва на y=155 */
+    --cross-w: 2.104%; /* 19.8 точки кадра */
+    --cross-h: 2.153%; /* 36 точек кадра */
   }
 
   .two-lands-head,

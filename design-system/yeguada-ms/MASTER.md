@@ -60,10 +60,43 @@ That only holds while new work reads the tokens. Rules:
   a fallback for browsers without `color-mix`.
 - Use `--gold-fixed` only where movement would be a defect: the focus ring,
   text selection, the filled primary button, and light cast over a photo.
-- Never add a second per-element glow animation. One light source, one
-  keyframe. Extra animations put elements out of step, which is the exact
-  thing this system exists to prevent.
-- Photos never carry the glow. Their gold frames do.
+- A second glow animation is allowed only if it runs on `--orn-glint-period`
+  and peaks at 20% of the cycle, the same phase as `gold-breath`. Use it for
+  amplitude, never for a different rhythm. The rule guards against elements
+  drifting out of step, which is the exact thing this system exists to
+  prevent. `hero-cross-beacon` and `included-mark-beacon` are the examples in
+  the codebase. Use amplitude only where a travelling glint is impossible —
+  `included-mark-beacon` exists because the horseshoe is drawn by `<use>` from
+  the sprite and has no surface to sweep.
+- The travelling glint on top of the breath is carried by seams, the frieze,
+  section-number hairlines, the buying steps (hairline and roman numeral) and
+  the "what the buyer gets" list. All of them run `ornament-glint` or
+  `ornament-glint-line` on the shared period with no delay. A new ornament
+  either joins one of those selector lists or stays on breath alone; it never
+  gets its own period.
+- Photos never carry the glow. Their gold frames do — and light painted over
+  a photo, such as the cross on the church, is a separate overlay layer.
+
+### Light pinned to a point inside a photo
+
+`.hero-cross` glows on the cross of the church cupola, which is painted into
+the hero photograph. The pattern for anything similar:
+
+- The overlay lives inside the media wrapper, so the wrapper's own scroll and
+  parallax transforms carry it for free.
+- A `::before` reproduces `object-fit: cover` from `cqw`/`cqh` units, so the
+  light is pinned to a point in the *image*, not a point on the screen.
+- The overlay repeats the photo's own animations and `transform-origin`
+  verbatim. That is what keeps it from drifting as the frame breathes.
+- Its `--pos-x` must match the photo's `object-position` at every breakpoint,
+  and art-directed sources need their own aspect ratio and coordinates.
+- Blend with `screen` so the layer only ever adds light.
+- A mark drawn over the photo is a mask filled from `--gold`, exactly like the
+  seam ornaments, so it breathes with everything else. Size it in percent of
+  the cover box and stand it on its anchor point with `translate(-50%, -100%)`.
+  The `.hero-cross` mark is the eight-pointed Russian cross: the slanted foot
+  bar rises to the viewer's left. That is canon, not decoration — do not
+  mirror it.
 
 ## Typography
 
