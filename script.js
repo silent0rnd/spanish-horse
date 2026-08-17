@@ -167,6 +167,8 @@
     const dialogClose = horseDialog.querySelector(".dialog-close");
     const dialogContact = horseDialog.querySelector("[data-dialog-contact]");
     const dialogImageWrap = dialogImage.closest(".dialog-image-wrap");
+    const canUseViewTransition =
+      !reducedMotion && typeof document.startViewTransition === "function";
     let activeHorseCard = null;
 
     // Окно открывается сразу, кадр догружается отдельно. Пока кадра нет,
@@ -188,6 +190,7 @@
 
     const renderSpecs = (card) => {
       dialogSpecs.textContent = "";
+      let shown = 0;
       specFields.forEach(([key, label]) => {
         const value = card.dataset[key];
         if (!value) return;
@@ -197,20 +200,67 @@
         dt.textContent = label;
         dd.textContent = value;
         row.append(dt, dd);
+        // Паспорт приходит построчно: задержку строки держит --i.
+        row.style.setProperty("--i", String(shown));
+        shown += 1;
         dialogSpecs.append(row);
       });
     };
 
+    // Портрет переезжает между карточкой и досье одним и тем же именем
+    // перехода. Имя живёт только на время перехода, иначе два одинаковых
+    // имени на странице сорвут следующий переход.
+    const clearPortraitTransition = (sourceImage) => {
+      if (sourceImage) sourceImage.style.removeProperty("view-transition-name");
+      dialogImage.style.removeProperty("view-transition-name");
+    };
+
+    const openDialog = () => {
+      document.body.classList.add("dialog-open");
+      horseDialog.showModal();
+    };
+
+    // Стаггер спецификаций стартует после переезда портрета, чтобы две
+    // хореографии не шли одновременно.
+    const runSpecsStagger = () => {
+      if (horseDialog.open && horseDialog.classList.contains("is-specs-staged")) {
+        horseDialog.classList.add("is-specs-in");
+      }
+    };
+
     const closeHorseDialog = () => {
       if (!horseDialog.open) return;
-      horseDialog.close();
-      document.body.classList.remove("dialog-open");
-      activeHorseCard?.focus({ preventScroll: true });
+      const card = activeHorseCard;
+      const sourceImage = card ? card.querySelector("img") : null;
       activeHorseCard = null;
+      horseDialog.classList.remove("is-specs-staged", "is-specs-in");
+
+      const finish = () => {
+        horseDialog.close();
+        document.body.classList.remove("dialog-open");
+        card?.focus({ preventScroll: true });
+      };
+
+      if (!canUseViewTransition || !sourceImage) {
+        finish();
+        clearPortraitTransition(sourceImage);
+        return;
+      }
+
+      dialogImage.style.viewTransitionName = "horse-portrait";
+      sourceImage.style.viewTransitionName = "none";
+
+      const transition = document.startViewTransition(() => {
+        finish();
+        dialogImage.style.viewTransitionName = "none";
+        sourceImage.style.viewTransitionName = "horse-portrait";
+      });
+
+      transition.finished.finally(() => clearPortraitTransition(sourceImage));
     };
 
     document.querySelectorAll("button.horse-card[data-name]").forEach((card) => {
-      card.addEventListener("click", () => {
+      card.addEventListener("click", async () => {
         const sourceImage = card.querySelector("img");
         activeHorseCard = card;
         dialogTitle.textContent = card.dataset.name || "Лошадь Yeguada MS";
@@ -221,15 +271,46 @@
         dialogImage.alt = sourceImage ? sourceImage.alt : "";
         dialogImageWrap.classList.remove("image-error");
         dialogImageWrap.classList.toggle("is-frame-loading", !dialogImage.complete);
+        horseDialog.classList.remove("is-specs-in");
+        horseDialog.classList.toggle("is-specs-staged", !reducedMotion);
 
-        document.body.classList.add("dialog-open");
-        horseDialog.showModal();
+        if (!canUseViewTransition || !sourceImage) {
+          openDialog();
+          runSpecsStagger();
+          return;
+        }
+
+        // Снимок «после» нельзя делать раньше, чем кадр досье готов к
+        // отрисовке: иначе портрет переезжает в пустоту.
+        try {
+          await dialogImage.decode();
+        } catch (_) {
+          // Кадр может быть битым - тогда переезжает плашка загрузки.
+        }
+
+        if (activeHorseCard !== card) return;
+        dialogImageWrap.classList.remove("is-frame-loading");
+
+        sourceImage.style.viewTransitionName = "horse-portrait";
+        dialogImage.style.viewTransitionName = "horse-portrait";
+
+        const transition = document.startViewTransition(() => {
+          openDialog();
+          sourceImage.style.viewTransitionName = "none";
+        });
+
+        transition.ready.finally(() => dialogClose.focus({ preventScroll: true }));
+        transition.finished.finally(() => {
+          clearPortraitTransition(sourceImage);
+          runSpecsStagger();
+        });
       });
     });
 
     dialogClose.addEventListener("click", closeHorseDialog);
     dialogContact.addEventListener("click", () => {
       horseDialog.close();
+      horseDialog.classList.remove("is-specs-staged", "is-specs-in");
       document.body.classList.remove("dialog-open");
       activeHorseCard = null;
     });

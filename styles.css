@@ -2155,6 +2155,22 @@ summary {
   }
 }
 
+/* Портрет физически переезжает из карточки в досье и обратно.
+   Имя перехода вешает и снимает скрипт. */
+::view-transition-group(horse-portrait) {
+  animation-duration: 0.4s;
+  animation-timing-function: var(--ease);
+}
+
+::view-transition-image-pair(horse-portrait) {
+  isolation: auto;
+}
+
+::view-transition-old(horse-portrait),
+::view-transition-new(horse-portrait) {
+  mix-blend-mode: normal;
+}
+
 /* Недостающий кадр отрисовывается орнаментальной плашкой из системы Шва,
    а не сообщением об ошибке: пустое место должно читаться как графика.
    Та же плашка служит состоянием загрузки кадра в досье. */
@@ -2775,6 +2791,27 @@ summary {
 .dialog-specs > div {
   padding-top: 14px;
   border-top: 1px solid var(--line);
+}
+
+/* Спецификации приходят как паспорт: строка за строкой.
+   Шаг держит --stagger, номер строки - --i из скрипта. */
+.dialog-specs {
+  --stagger: 60ms;
+}
+
+.horse-dialog.is-specs-staged:not(.is-specs-in) .dialog-specs > div {
+  opacity: 0;
+}
+
+.horse-dialog.is-specs-in .dialog-specs > div {
+  animation: dialog-spec-in 0.42s var(--ease) calc(var(--i) * var(--stagger)) both;
+}
+
+@keyframes dialog-spec-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }
 
 .dialog-specs dt {
@@ -4088,6 +4125,7 @@ summary {
   }
 
   .dialog-specs {
+    --stagger: 40ms;
     grid-template-columns: 1fr 1fr;
     gap: 16px 20px;
   }
@@ -4135,6 +4173,13 @@ summary {
     transform: none !important;
     clip-path: none !important;
     transition-delay: 0s !important;
+  }
+
+  /* Паспорт в досье стоит собранным: строки на месте, стаггера нет */
+  .dialog-specs > div {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
   }
 
   /* Шов под открытым вопросом просто есть, без прорисовки */
